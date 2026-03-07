@@ -11,7 +11,7 @@ import {
   DestroyRef,
   inject,
 } from '@angular/core';
-import { createChart, BaselineSeries, type IChartApi, type ISeriesApi, type BaselineStyleOptions, type DeepPartial } from 'lightweight-charts';
+import { createChart, BaselineSeries, LineSeries, LineStyle, type IChartApi, type ISeriesApi, type BaselineStyleOptions, type DeepPartial } from 'lightweight-charts';
 import type { DailySummary } from '../models/trade';
 
 @Component({
@@ -24,6 +24,10 @@ import type { DailySummary } from '../models/trade';
           <div class="flex items-center gap-2">
             <div class="w-8 h-0.5 bg-primary"></div>
             <span class="text-xs font-bold text-slate-100 uppercase tracking-widest">{{ monthLabel() }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-0 border-t-2 border-dashed" style="border-color: #2A3038"></div>
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">{{ previousMonthLabel() }}</span>
           </div>
         </div>
         <div class="text-[10px] font-bold text-slate-500 tracking-[0.2em] uppercase">Cumulative Profit &amp; Loss ({{ currency() }})</div>
@@ -39,6 +43,8 @@ import type { DailySummary } from '../models/trade';
 })
 export class PnlChart {
   readonly dailySummaries = input.required<Record<string, DailySummary>>();
+  readonly previousMonthSummaries = input<Record<string, DailySummary>>({});
+  readonly previousMonthLabel = input<string>('');
   readonly currency = input<string>('EUR');
   readonly monthLabel = input<string>('');
   readonly daySelected = output<DailySummary>();
@@ -48,6 +54,7 @@ export class PnlChart {
 
   private chart: IChartApi | null = null;
   private series: ISeriesApi<'Baseline'> | null = null;
+  private previousSeries: ISeriesApi<'Line'> | null = null;
   private resizeObserver: ResizeObserver | null = null;
 
   protected readonly chartData = computed(() => {
@@ -59,6 +66,24 @@ export class PnlChart {
         time: key as `${number}-${number}-${number}`,
         value: cumulative += summaries[key].netPL,
       }));
+  });
+
+  protected readonly previousChartData = computed(() => {
+    const summaries = this.previousMonthSummaries();
+    const currentKeys = Object.keys(this.dailySummaries()).sort();
+    if (currentKeys.length === 0) return [];
+    // Extract current year-month to remap previous month dates
+    const currentYearMonth = currentKeys[0].substring(0, 7);
+    let cumulative = 0;
+    return Object.keys(summaries)
+      .sort()
+      .map(key => {
+        const day = key.substring(8); // extract DD
+        return {
+          time: `${currentYearMonth}-${day}` as `${number}-${number}-${number}`,
+          value: cumulative += summaries[key].netPL,
+        };
+      });
   });
 
   protected readonly ariaLabel = computed(() => {
@@ -76,8 +101,10 @@ export class PnlChart {
 
     effect(() => {
       const data = this.chartData();
+      const prevData = this.previousChartData();
       if (this.series) {
         this.series.setData(data);
+        this.previousSeries?.setData(prevData);
         this.chart?.timeScale().fitContent();
       }
     });
@@ -124,6 +151,17 @@ export class PnlChart {
 
     this.series = this.chart!.addSeries(BaselineSeries, baselineOptions);
     this.series!.setData(this.chartData());
+
+    this.previousSeries = this.chart!.addSeries(LineSeries, {
+      color: '#2A3038',
+      lineStyle: LineStyle.Dashed,
+      lineWidth: 2,
+      crosshairMarkerVisible: false,
+      priceLineVisible: false,
+      lastValueVisible: false,
+    });
+    this.previousSeries!.setData(this.previousChartData());
+
     this.chart.timeScale().fitContent();
 
     this.chart.subscribeClick((param) => {
@@ -146,6 +184,7 @@ export class PnlChart {
       this.chart?.remove();
       this.chart = null;
       this.series = null;
+      this.previousSeries = null;
     });
   }
 }

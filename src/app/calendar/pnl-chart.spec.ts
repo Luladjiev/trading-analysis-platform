@@ -31,6 +31,8 @@ const mockChart = {
 vi.mock('lightweight-charts', () => ({
   createChart: vi.fn(() => mockChart),
   BaselineSeries: {},
+  LineSeries: {},
+  LineStyle: { Dashed: 2 },
 }));
 
 function makeSummary(date: string, netPL: number): DailySummary {
@@ -39,10 +41,17 @@ function makeSummary(date: string, netPL: number): DailySummary {
 
 @Component({
   imports: [PnlChart],
-  template: `<app-pnl-chart [dailySummaries]="summaries" [currency]="currency" />`,
+  template: `<app-pnl-chart
+    [dailySummaries]="summaries"
+    [previousMonthSummaries]="previousSummaries"
+    [previousMonthLabel]="previousLabel"
+    [currency]="currency"
+  />`,
 })
 class TestHost {
   summaries: Record<string, DailySummary> = {};
+  previousSummaries: Record<string, DailySummary> = {};
+  previousLabel = '';
   currency = 'USD';
   readonly chart = viewChild.required(PnlChart);
 }
@@ -180,5 +189,71 @@ describe('PnlChart', () => {
     clickCallback!({ time: '2024-03-20' });
 
     expect(emitted).toEqual([]);
+  });
+
+  it('previousChartData remaps dates to current month and computes cumulative P/L', () => {
+    const fixture = TestBed.createComponent(TestHost);
+    fixture.componentInstance.summaries = {
+      '2024-03-01': makeSummary('2024-03-01', 10),
+    };
+    fixture.componentInstance.previousSummaries = {
+      '2024-02-05': makeSummary('2024-02-05', 100),
+      '2024-02-10': makeSummary('2024-02-10', -40),
+      '2024-02-20': makeSummary('2024-02-20', 60),
+    };
+    fixture.detectChanges();
+
+    const chart = fixture.componentInstance.chart();
+    const data = chart['previousChartData']();
+
+    expect(data).toEqual([
+      { time: '2024-03-05', value: 100 },
+      { time: '2024-03-10', value: 60 },
+      { time: '2024-03-20', value: 120 },
+    ]);
+  });
+
+  it('previousChartData returns empty array when current month has no data', () => {
+    const fixture = TestBed.createComponent(TestHost);
+    fixture.componentInstance.summaries = {};
+    fixture.componentInstance.previousSummaries = {
+      '2024-02-05': makeSummary('2024-02-05', 100),
+    };
+    fixture.detectChanges();
+
+    const chart = fixture.componentInstance.chart();
+    const data = chart['previousChartData']();
+
+    expect(data).toEqual([]);
+  });
+
+  it('previousChartData returns empty array when no previous summaries', () => {
+    const fixture = TestBed.createComponent(TestHost);
+    fixture.componentInstance.summaries = {
+      '2024-03-01': makeSummary('2024-03-01', 10),
+    };
+    fixture.componentInstance.previousSummaries = {};
+    fixture.detectChanges();
+
+    const chart = fixture.componentInstance.chart();
+    const data = chart['previousChartData']();
+
+    expect(data).toEqual([]);
+  });
+
+  it('renders previous month label in legend', () => {
+    const fixture = TestBed.createComponent(TestHost);
+    fixture.componentInstance.previousLabel = 'February 2024';
+    fixture.detectChanges();
+
+    const legend = fixture.nativeElement.textContent;
+    expect(legend).toContain('February 2024');
+  });
+
+  it('adds two series to the chart (baseline + previous line)', () => {
+    const fixture = TestBed.createComponent(TestHost);
+    fixture.detectChanges();
+
+    expect(mockChart.addSeries).toHaveBeenCalledTimes(2);
   });
 });

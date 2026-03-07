@@ -75,6 +75,8 @@ const MONTH_NAMES = [
       } @else {
         <app-pnl-chart
           [dailySummaries]="monthSummaries()"
+          [previousMonthSummaries]="previousMonthSummaries()"
+          [previousMonthLabel]="previousMonthLabel()"
           [currency]="currency"
           [monthLabel]="monthLabel() + ' ' + currentYear()"
           (daySelected)="selectedDaySummary.set($event)"
@@ -120,6 +122,20 @@ export class CalendarPage {
   protected readonly monthSummaries = computed(() =>
     this.tradeData.getDailySummariesForMonth(this.currentYear(), this.currentMonth()),
   );
+
+  protected readonly previousMonthSummaries = computed(() => {
+    let y = this.currentYear();
+    let m = this.currentMonth() - 1;
+    if (m < 1) { m = 12; y--; }
+    return this.tradeData.getDailySummariesForMonth(y, m);
+  });
+
+  protected readonly previousMonthLabel = computed(() => {
+    let y = this.currentYear();
+    let m = this.currentMonth() - 1;
+    if (m < 1) { m = 12; y--; }
+    return `${MONTH_NAMES[m - 1]} ${y}`;
+  });
 
   protected readonly calendarWeeks = computed(() => {
     const year = this.currentYear();
