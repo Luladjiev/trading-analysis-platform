@@ -27,7 +27,7 @@ import type { DailySummary } from '../models/trade';
         }
       </div>
       @if (summary()) {
-        <div class="mt-auto flex flex-col pt-8">
+        <div class="mt-auto flex flex-col">
           <span class="text-lg" [class]="plClass()">
             {{ plPrefix() }}{{ summary()!.netPL | currency: currency() : 'symbol-narrow' : '1.2-2' }}
           </span>
@@ -95,7 +95,7 @@ export class CalendarDayCell {
   });
 
   protected readonly hostClasses = computed(() => {
-    const base = 'min-h-[120px] p-4 transition-colors';
+    const base = 'h-[100px] p-2 flex flex-col transition-colors';
 
     if (!this.day()) {
       return `${base} bg-background-dark opacity-20`;
