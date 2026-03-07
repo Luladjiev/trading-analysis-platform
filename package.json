@@ -1,5 +1,5 @@
 {
-  "name": "trading-calendar",
+  "name": "trading-analysis-platform",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -9,7 +9,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:trading-calendar": "node dist/trading-calendar/server/server.mjs"
+    "serve:ssr:trading-analysis-platform": "node dist/trading-analysis-platform/server/server.mjs"
   },
   "private": true,
   "packageManager": "npm@11.7.0",

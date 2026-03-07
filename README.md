@@ -1,4 +1,4 @@
-# Trading Calendar
+# Trading Analysis Platform
 
 A trading performance analysis platform that visualizes MetaTrader 5 trading history. Built with Angular 21, Tailwind CSS, and server-side prerendering (SSG).
 
@@ -49,7 +49,7 @@ Open `http://localhost:4200/`.
 npm run build
 ```
 
-Produces a prerendered static site in `dist/trading-calendar/`.
+Produces a prerendered static site in `dist/trading-analysis-platform/`.
 
 ## Tests
 

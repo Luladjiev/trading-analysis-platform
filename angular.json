@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "trading-calendar": {
+    "trading-analysis-platform": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -64,10 +64,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "trading-calendar:build:production"
+              "buildTarget": "trading-analysis-platform:build:production"
             },
             "development": {
-              "buildTarget": "trading-calendar:build:development"
+              "buildTarget": "trading-analysis-platform:build:development"
             }
           },
           "defaultConfiguration": "development"
