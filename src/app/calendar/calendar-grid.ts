@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import type { DailySummary } from '../models/trade';
 import { CalendarDayCell } from './calendar-day-cell';
 
@@ -31,6 +31,7 @@ export interface CalendarDaySlot {
               [currency]="currency()"
               [isToday]="slot.isToday"
               [isWeekend]="slot.isWeekend"
+              (dayClick)="daySelected.emit($event)"
             />
           }
         </div>
@@ -42,6 +43,7 @@ export class CalendarGrid {
   readonly weeks = input.required<CalendarDaySlot[][]>();
   readonly dailySummaries = input.required<Record<string, DailySummary>>();
   readonly currency = input('EUR');
+  readonly daySelected = output<DailySummary>();
 
   protected readonly weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 }

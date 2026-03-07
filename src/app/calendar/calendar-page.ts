@@ -3,6 +3,8 @@ import { TradeDataService } from '../services/trade-data.service';
 import { CalendarHeader } from './calendar-header';
 import { CalendarGrid, type CalendarDaySlot } from './calendar-grid';
 import { PnlChart } from './pnl-chart';
+import { TradeListDialog } from './trade-list-dialog';
+import type { DailySummary } from '../models/trade';
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -12,7 +14,7 @@ const MONTH_NAMES = [
 @Component({
   selector: 'app-calendar-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CalendarHeader, CalendarGrid, PnlChart],
+  imports: [CalendarHeader, CalendarGrid, PnlChart, TradeListDialog],
   template: `
     <div class="mx-auto max-w-4xl px-4 py-6">
       <app-calendar-header
@@ -50,11 +52,20 @@ const MONTH_NAMES = [
           [weeks]="calendarWeeks()"
           [dailySummaries]="monthSummaries()"
           [currency]="currency"
+          (daySelected)="selectedDaySummary.set($event)"
         />
       } @else {
         <app-pnl-chart
           [dailySummaries]="monthSummaries()"
           [currency]="currency"
+          (daySelected)="selectedDaySummary.set($event)"
+        />
+      }
+      @if (selectedDaySummary()) {
+        <app-trade-list-dialog
+          [summary]="selectedDaySummary()!"
+          [currency]="currency"
+          (closed)="selectedDaySummary.set(null)"
         />
       }
     </div>
@@ -64,6 +75,7 @@ export class CalendarPage {
   private readonly tradeData = inject(TradeDataService);
   readonly currency = this.tradeData.account.currency;
 
+  readonly selectedDaySummary = signal<DailySummary | null>(null);
   readonly view = signal<'calendar' | 'chart'>('calendar');
   readonly currentYear = signal(0);
   readonly currentMonth = signal(0);

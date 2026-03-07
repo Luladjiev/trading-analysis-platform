@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, output } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import type { DailySummary } from '../models/trade';
 
@@ -10,6 +10,11 @@ import type { DailySummary } from '../models/trade';
     'role': 'gridcell',
     '[attr.aria-label]': 'ariaLabel()',
     '[class]': 'hostClasses()',
+    '[attr.tabindex]': 'isClickable() ? 0 : -1',
+    '[style.cursor]': 'isClickable() ? "pointer" : "default"',
+    '(click)': 'onCellClick()',
+    '(keydown.enter)': 'onCellClick()',
+    '(keydown.space)': 'onCellClick($event)',
   },
   template: `
     @if (day()) {
@@ -31,6 +36,15 @@ export class CalendarDayCell {
   readonly currency = input('EUR');
   readonly isToday = input(false);
   readonly isWeekend = input(false);
+  readonly dayClick = output<DailySummary>();
+
+  readonly isClickable = computed(() => !!this.summary());
+
+  protected onCellClick(event?: Event) {
+    event?.preventDefault();
+    const s = this.summary();
+    if (s) this.dayClick.emit(s);
+  }
 
   protected readonly plClass = computed(() => {
     const s = this.summary();
@@ -50,7 +64,7 @@ export class CalendarDayCell {
     const s = this.summary();
     if (!s) return `Day ${d}`;
     const dir = s.netPL >= 0 ? 'profit' : 'loss';
-    return `Day ${d}: ${dir} ${Math.abs(s.netPL)} ${this.currency()}, ${s.tradeCount} trades`;
+    return `Day ${d}: ${dir} ${Math.abs(s.netPL)} ${this.currency()}, ${s.tradeCount} trades. Click to view trades`;
   });
 
   protected readonly hostClasses = computed(() => {
@@ -58,6 +72,7 @@ export class CalendarDayCell {
     const weekend = this.isWeekend() ? ' bg-gray-50' : ' bg-white';
     const today = this.isToday() ? ' ring-2 ring-blue-500' : '';
     const empty = !this.day() ? ' border-transparent' : ' border-gray-200';
-    return base + weekend + today + empty;
+    const clickable = this.isClickable() ? ' hover:shadow-md hover:border-blue-300 transition-shadow' : '';
+    return base + weekend + today + empty + clickable;
   });
 }

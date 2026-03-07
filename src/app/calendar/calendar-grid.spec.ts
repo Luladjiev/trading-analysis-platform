@@ -1,5 +1,6 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { CalendarGrid, type CalendarDaySlot } from './calendar-grid';
+import type { DailySummary } from '../models/trade';
 
 describe('CalendarGrid', () => {
   let fixture: ComponentFixture<CalendarGrid>;
@@ -40,5 +41,24 @@ describe('CalendarGrid', () => {
 
     const cells = fixture.nativeElement.querySelectorAll('app-calendar-day-cell');
     expect(cells.length).toBe(14);
+  });
+
+  it('daySelected relays dayClick from child cell', () => {
+    const summary: DailySummary = {
+      date: '2024-01-01',
+      tradeCount: 1,
+      netPL: 50,
+      trades: [{ symbol: 'EURUSD', type: 'buy', volume: 0.1, commission: -1, swap: 0, profit: 51, netPL: 50 }],
+    };
+    fixture.componentRef.setInput('weeks', twoWeeks);
+    fixture.componentRef.setInput('dailySummaries', { '2024-01-01': summary });
+    fixture.detectChanges();
+
+    const spy = vi.fn();
+    fixture.componentInstance.daySelected.subscribe(spy);
+
+    const firstCell = fixture.nativeElement.querySelector('app-calendar-day-cell');
+    firstCell.click();
+    expect(spy).toHaveBeenCalledWith(summary);
   });
 });

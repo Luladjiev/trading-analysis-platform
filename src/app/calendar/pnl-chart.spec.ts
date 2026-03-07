@@ -16,11 +16,16 @@ const mockSeries = {
   setData: vi.fn(),
 };
 
+let clickCallback: ((param: { time?: string }) => void) | null = null;
+
 const mockChart = {
   addSeries: vi.fn(() => mockSeries),
   timeScale: vi.fn(() => ({ fitContent: vi.fn() })),
   applyOptions: vi.fn(),
   remove: vi.fn(),
+  subscribeClick: vi.fn((cb: (param: { time?: string }) => void) => {
+    clickCallback = cb;
+  }),
 };
 
 vi.mock('lightweight-charts', () => ({
@@ -122,5 +127,58 @@ describe('PnlChart', () => {
     const container = fixture.nativeElement.querySelector('[role="img"]');
     expect(container).toBeTruthy();
     expect(container.getAttribute('aria-label')).toBeTruthy();
+  });
+
+  it('subscribes to chart click events on init', () => {
+    const fixture = TestBed.createComponent(TestHost);
+    fixture.detectChanges();
+
+    expect(mockChart.subscribeClick).toHaveBeenCalledOnce();
+  });
+
+  it('emits daySelected when clicking a valid data point', () => {
+    const summary = makeSummary('2024-03-15', 50);
+    const fixture = TestBed.createComponent(TestHost);
+    fixture.componentInstance.summaries = {
+      '2024-03-15': summary,
+    };
+    fixture.detectChanges();
+
+    const emitted: DailySummary[] = [];
+    fixture.componentInstance.chart().daySelected.subscribe((v: DailySummary) => emitted.push(v));
+
+    clickCallback!({ time: '2024-03-15' });
+
+    expect(emitted).toEqual([summary]);
+  });
+
+  it('does not emit daySelected when clicking with no time', () => {
+    const fixture = TestBed.createComponent(TestHost);
+    fixture.componentInstance.summaries = {
+      '2024-03-15': makeSummary('2024-03-15', 50),
+    };
+    fixture.detectChanges();
+
+    const emitted: DailySummary[] = [];
+    fixture.componentInstance.chart().daySelected.subscribe((v: DailySummary) => emitted.push(v));
+
+    clickCallback!({});
+
+    expect(emitted).toEqual([]);
+  });
+
+  it('does not emit daySelected when clicking a non-matching date', () => {
+    const fixture = TestBed.createComponent(TestHost);
+    fixture.componentInstance.summaries = {
+      '2024-03-15': makeSummary('2024-03-15', 50),
+    };
+    fixture.detectChanges();
+
+    const emitted: DailySummary[] = [];
+    fixture.componentInstance.chart().daySelected.subscribe((v: DailySummary) => emitted.push(v));
+
+    clickCallback!({ time: '2024-03-20' });
+
+    expect(emitted).toEqual([]);
   });
 });

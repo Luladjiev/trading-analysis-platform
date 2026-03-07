@@ -2,6 +2,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   input,
+  output,
   computed,
   effect,
   viewChild,
@@ -19,7 +20,7 @@ import type { DailySummary } from '../models/trade';
   template: `
     <div
       #chartContainer
-      class="w-full h-96"
+      class="w-full h-96 cursor-pointer"
       role="img"
       [attr.aria-label]="ariaLabel()"
     ></div>
@@ -28,6 +29,7 @@ import type { DailySummary } from '../models/trade';
 export class PnlChart {
   readonly dailySummaries = input.required<Record<string, DailySummary>>();
   readonly currency = input<string>('EUR');
+  readonly daySelected = output<DailySummary>();
 
   private readonly chartContainer = viewChild.required<ElementRef<HTMLElement>>('chartContainer');
   private readonly destroyRef = inject(DestroyRef);
@@ -77,6 +79,9 @@ export class PnlChart {
       height: 384,
       handleScale: false,
       handleScroll: false,
+      crosshair: {
+        mode: 0,
+      },
       layout: {
         background: { color: 'transparent' },
         textColor: '#9ca3af',
@@ -106,6 +111,13 @@ export class PnlChart {
     this.series = this.chart!.addSeries(BaselineSeries, baselineOptions);
     this.series!.setData(this.chartData());
     this.chart.timeScale().fitContent();
+
+    this.chart.subscribeClick((param) => {
+      if (!param.time) return;
+      const dateKey = param.time as string;
+      const summary = this.dailySummaries()[dateKey];
+      if (summary) this.daySelected.emit(summary);
+    });
 
     this.resizeObserver = new ResizeObserver(entries => {
       const entry = entries[0];
