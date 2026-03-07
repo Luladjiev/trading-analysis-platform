@@ -1,7 +1,7 @@
-import { Component, ChangeDetectionStrategy, signal, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { TradeDataService } from '../services/trade-data.service';
 import { CalendarHeader } from './calendar-header';
-import { CalendarGrid, type CalendarDaySlot } from './calendar-grid';
+import { type CalendarDaySlot, CalendarGrid } from './calendar-grid';
 import { PnlChart } from './pnl-chart';
 import { TradeListDialog } from './trade-list-dialog';
 import type { DailySummary } from '../models/trade';
@@ -16,36 +16,54 @@ const MONTH_NAMES = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CalendarHeader, CalendarGrid, PnlChart, TradeListDialog],
   template: `
-    <div class="mx-auto max-w-4xl px-4 py-6">
-      <app-calendar-header
-        [monthLabel]="monthLabel()"
-        [year]="currentYear()"
-        [monthlyTotal]="monthlyTotal()"
-        [currency]="currency"
-        (previousMonth)="navigateMonth(-1)"
-        (nextMonth)="navigateMonth(1)"
-      />
-      <div class="mb-4 flex gap-1" role="tablist" aria-label="View mode">
-        <button
-          role="tab"
-          [attr.aria-selected]="view() === 'calendar'"
-          [class]="view() === 'calendar'
-            ? 'rounded-md px-3 py-1.5 text-sm font-medium bg-gray-200 text-gray-900'
-            : 'rounded-md px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100'"
-          (click)="view.set('calendar')"
-        >
-          Calendar
-        </button>
-        <button
-          role="tab"
-          [attr.aria-selected]="view() === 'chart'"
-          [class]="view() === 'chart'
-            ? 'rounded-md px-3 py-1.5 text-sm font-medium bg-gray-200 text-gray-900'
-            : 'rounded-md px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100'"
-          (click)="view.set('chart')"
-        >
-          Cumulative P/L
-        </button>
+    <main class="flex flex-col flex-1 px-6 py-6 lg:px-12 max-w-[1400px] mx-auto w-full">
+      <div class="flex flex-col md:flex-row justify-between items-start gap-6 mb-6">
+        <app-calendar-header
+          [monthLabel]="monthLabel()"
+          [year]="currentYear()"
+          [monthlyTotal]="monthlyTotal()"
+          [currency]="currency"
+        />
+        <div class="flex flex-col gap-6 items-end w-full md:w-auto">
+          <div class="flex bg-cool-grey/40 p-1 rounded-lg" role="tablist" aria-label="View mode">
+            <button
+              role="tab"
+              [attr.aria-selected]="view() === 'calendar'"
+              [class]="view() === 'calendar'
+                ? 'px-6 py-2 text-sm font-bold bg-primary text-white rounded-lg shadow-lg shadow-primary/20 tracking-wider'
+                : 'px-6 py-2 text-sm font-bold text-slate-400 hover:text-white transition-colors tracking-wider'"
+              (click)="view.set('calendar')"
+            >
+              CALENDAR
+            </button>
+            <button
+              role="tab"
+              [attr.aria-selected]="view() === 'chart'"
+              [class]="view() === 'chart'
+                ? 'px-6 py-2 text-sm font-bold bg-primary text-white rounded-lg shadow-lg shadow-primary/20 tracking-wider'
+                : 'px-6 py-2 text-sm font-bold text-slate-400 hover:text-white transition-colors tracking-wider'"
+              (click)="view.set('chart')"
+            >
+              CUMULATIVE P/L
+            </button>
+          </div>
+          <div class="flex gap-2">
+            <button
+              (click)="navigateMonth(-1)"
+              aria-label="Previous month"
+              class="flex items-center gap-2 px-5 py-2.5 bg-cool-grey/40 hover:bg-cool-grey/60 text-white text-xs font-bold uppercase tracking-widest transition-all border border-white/5"
+            >
+              &larr; Prev
+            </button>
+            <button
+              (click)="navigateMonth(1)"
+              aria-label="Next month"
+              class="flex items-center gap-2 px-5 py-2.5 bg-cool-grey/40 hover:bg-cool-grey/60 text-white text-xs font-bold uppercase tracking-widest transition-all border border-white/5"
+            >
+              Next &rarr;
+            </button>
+          </div>
+        </div>
       </div>
       @if (view() === 'calendar') {
         <app-calendar-grid
@@ -58,6 +76,7 @@ const MONTH_NAMES = [
         <app-pnl-chart
           [dailySummaries]="monthSummaries()"
           [currency]="currency"
+          [monthLabel]="monthLabel() + ' ' + currentYear()"
           (daySelected)="selectedDaySummary.set($event)"
         />
       }
@@ -68,7 +87,7 @@ const MONTH_NAMES = [
           (closed)="selectedDaySummary.set(null)"
         />
       }
-    </div>
+    </main>
   `,
 })
 export class CalendarPage {

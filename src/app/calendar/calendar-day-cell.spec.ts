@@ -28,24 +28,32 @@ describe('CalendarDayCell', () => {
     component = fixture.componentInstance;
   });
 
-  it('plClass returns text-green-700 for positive netPL', () => {
+  it('plClass returns text-success font-medium for positive netPL', () => {
     fixture.componentRef.setInput('day', 15);
     fixture.componentRef.setInput('summary', positiveSummary);
     fixture.detectChanges();
-    expect(component['plClass']()).toBe('text-green-700');
+    expect(component['plClass']()).toBe('text-success font-medium');
   });
 
-  it('plClass returns text-red-700 for negative netPL', () => {
+  it('plClass returns text-danger font-medium for negative netPL', () => {
     fixture.componentRef.setInput('day', 16);
     fixture.componentRef.setInput('summary', negativeSummary);
     fixture.detectChanges();
-    expect(component['plClass']()).toBe('text-red-700');
+    expect(component['plClass']()).toBe('text-danger font-medium');
   });
 
   it('plClass returns empty string when no summary', () => {
     fixture.componentRef.setInput('day', 1);
     fixture.detectChanges();
     expect(component['plClass']()).toBe('');
+  });
+
+  it('plClass returns font-bold for today', () => {
+    fixture.componentRef.setInput('day', 15);
+    fixture.componentRef.setInput('summary', positiveSummary);
+    fixture.componentRef.setInput('isToday', true);
+    fixture.detectChanges();
+    expect(component['plClass']()).toBe('text-success font-bold');
   });
 
   it('plPrefix returns + for positive netPL', () => {
@@ -68,6 +76,53 @@ describe('CalendarDayCell', () => {
     expect(component['plPrefix']()).toBe('');
   });
 
+  it('dayDisplay zero-pads single digit days', () => {
+    fixture.componentRef.setInput('day', 5);
+    fixture.detectChanges();
+    expect(component['dayDisplay']()).toBe('05');
+  });
+
+  it('dayDisplay does not pad double digit days', () => {
+    fixture.componentRef.setInput('day', 15);
+    fixture.detectChanges();
+    expect(component['dayDisplay']()).toBe('15');
+  });
+
+  it('dayNumberClass returns text-primary for today', () => {
+    fixture.componentRef.setInput('day', 7);
+    fixture.componentRef.setInput('isToday', true);
+    fixture.detectChanges();
+    expect(component['dayNumberClass']()).toContain('text-primary');
+  });
+
+  it('dayNumberClass returns text-slate-100 when summary present', () => {
+    fixture.componentRef.setInput('day', 15);
+    fixture.componentRef.setInput('summary', positiveSummary);
+    fixture.detectChanges();
+    expect(component['dayNumberClass']()).toContain('text-slate-100');
+  });
+
+  it('dayNumberClass returns text-slate-500 when no summary', () => {
+    fixture.componentRef.setInput('day', 1);
+    fixture.detectChanges();
+    expect(component['dayNumberClass']()).toContain('text-slate-500');
+  });
+
+  it('barClass returns bg-success for today with positive P/L', () => {
+    fixture.componentRef.setInput('day', 7);
+    fixture.componentRef.setInput('summary', positiveSummary);
+    fixture.componentRef.setInput('isToday', true);
+    fixture.detectChanges();
+    expect(component['barClass']()).toBe('bg-success');
+  });
+
+  it('barClass returns bg-success/30 for non-today positive P/L', () => {
+    fixture.componentRef.setInput('day', 15);
+    fixture.componentRef.setInput('summary', positiveSummary);
+    fixture.detectChanges();
+    expect(component['barClass']()).toBe('bg-success/30');
+  });
+
   it('ariaLabel returns Day N when no summary', () => {
     fixture.componentRef.setInput('day', 5);
     fixture.detectChanges();
@@ -88,30 +143,25 @@ describe('CalendarDayCell', () => {
     expect(component['ariaLabel']()).toBe('Day 16: loss 30 EUR, 1 trades. Click to view trades');
   });
 
-  it('hostClasses includes bg-gray-50 when isWeekend is true', () => {
-    fixture.componentRef.setInput('day', 6);
-    fixture.componentRef.setInput('isWeekend', true);
+  it('hostClasses includes opacity-20 when no day', () => {
     fixture.detectChanges();
-    expect(component['hostClasses']()).toContain('bg-gray-50');
-    expect(component['hostClasses']()).not.toContain('bg-white');
+    expect(component['hostClasses']()).toContain('opacity-20');
+    expect(component['hostClasses']()).toContain('bg-background-dark');
   });
 
-  it('hostClasses includes ring class when isToday is true', () => {
+  it('hostClasses includes border-primary for today', () => {
     fixture.componentRef.setInput('day', 7);
     fixture.componentRef.setInput('isToday', true);
     fixture.detectChanges();
-    expect(component['hostClasses']()).toContain('ring-2 ring-blue-500');
+    expect(component['hostClasses']()).toContain('border border-primary/60');
+    expect(component['hostClasses']()).toContain('bg-white/[0.04]');
   });
 
-  it('hostClasses includes border-transparent when no day', () => {
-    fixture.detectChanges();
-    expect(component['hostClasses']()).toContain('border-transparent');
-  });
-
-  it('hostClasses includes border-gray-200 when day is set', () => {
+  it('hostClasses includes bg-background-dark for regular day', () => {
     fixture.componentRef.setInput('day', 1);
     fixture.detectChanges();
-    expect(component['hostClasses']()).toContain('border-gray-200');
+    expect(component['hostClasses']()).toContain('bg-background-dark');
+    expect(component['hostClasses']()).toContain('hover:bg-white/[0.03]');
   });
 
   it('dayClick emits summary when cell with trades is clicked', () => {
@@ -142,19 +192,5 @@ describe('CalendarDayCell', () => {
     fixture.componentRef.setInput('summary', undefined);
     fixture.detectChanges();
     expect(fixture.nativeElement.getAttribute('tabindex')).toBe('-1');
-  });
-
-  it('clickable cells include hover classes in hostClasses', () => {
-    fixture.componentRef.setInput('day', 15);
-    fixture.componentRef.setInput('summary', positiveSummary);
-    fixture.detectChanges();
-    expect(component['hostClasses']()).toContain('hover:shadow-md');
-    expect(component['hostClasses']()).toContain('hover:border-blue-300');
-  });
-
-  it('non-clickable cells do not include hover classes', () => {
-    fixture.componentRef.setInput('day', 1);
-    fixture.detectChanges();
-    expect(component['hostClasses']()).not.toContain('hover:shadow-md');
   });
 });

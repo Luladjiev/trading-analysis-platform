@@ -29,48 +29,22 @@ describe('CalendarHeader', () => {
     fixture.componentRef.setInput('monthlyTotal', total);
     fixture.detectChanges();
 
-    const p: HTMLElement = fixture.nativeElement.querySelector('p');
-    expect(p.textContent).toContain('+');
-    expect(p.textContent).toContain('4 trades');
-    expect(p.className).toContain('text-green-700');
+    const plSpan: HTMLElement = fixture.nativeElement.querySelector('.text-success, .text-danger');
+    expect(plSpan.textContent).toContain('+');
+    expect(plSpan.className).toContain('text-success');
+
+    const countSpan: HTMLElement = fixture.nativeElement.querySelector('.text-slate-500');
+    expect(countSpan.textContent).toContain('4 trades');
   });
 
-  it('displays monthly total with red color for negative', () => {
+  it('displays monthly total with danger color for negative', () => {
     const total: MonthlyTotal = { netPL: -50, tradeCount: 2 };
     fixture.componentRef.setInput('monthLabel', 'February');
     fixture.componentRef.setInput('year', 2024);
     fixture.componentRef.setInput('monthlyTotal', total);
     fixture.detectChanges();
 
-    const p: HTMLElement = fixture.nativeElement.querySelector('p');
-    expect(p.className).toContain('text-red-700');
-  });
-
-  it('emits previousMonth when prev button clicked', () => {
-    fixture.componentRef.setInput('monthLabel', 'January');
-    fixture.componentRef.setInput('year', 2024);
-    fixture.detectChanges();
-
-    const spy = vi.fn();
-    component.previousMonth.subscribe(spy);
-
-    const btn: HTMLButtonElement = fixture.nativeElement.querySelector('[aria-label="Previous month"]');
-    btn.click();
-
-    expect(spy).toHaveBeenCalledOnce();
-  });
-
-  it('emits nextMonth when next button clicked', () => {
-    fixture.componentRef.setInput('monthLabel', 'January');
-    fixture.componentRef.setInput('year', 2024);
-    fixture.detectChanges();
-
-    const spy = vi.fn();
-    component.nextMonth.subscribe(spy);
-
-    const btn: HTMLButtonElement = fixture.nativeElement.querySelector('[aria-label="Next month"]');
-    btn.click();
-
-    expect(spy).toHaveBeenCalledOnce();
+    const plSpan: HTMLElement = fixture.nativeElement.querySelector('.text-success, .text-danger');
+    expect(plSpan.className).toContain('text-danger');
   });
 });

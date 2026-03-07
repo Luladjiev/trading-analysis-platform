@@ -53,16 +53,16 @@ describe('TradeListDialog', () => {
     expect(rows[1].textContent).toContain('GBPUSD');
   });
 
-  it('shows total net P/L with text-green-700 for positive', () => {
+  it('shows total net P/L with text-success for positive', () => {
     createComponent(summary);
     const totalCell = fixture.nativeElement.querySelector('tfoot tr td:last-child');
-    expect(totalCell.className).toContain('text-green-700');
+    expect(totalCell.className).toContain('text-success');
   });
 
-  it('shows total net P/L with text-red-700 for negative', () => {
+  it('shows total net P/L with text-danger for negative', () => {
     createComponent(negativeSummary);
     const totalCell = fixture.nativeElement.querySelector('tfoot tr td:last-child');
-    expect(totalCell.className).toContain('text-red-700');
+    expect(totalCell.className).toContain('text-danger');
   });
 
   it('emits closed when close button clicked', () => {
