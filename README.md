@@ -1,59 +1,58 @@
-# TradingCalendar
+# Trading Calendar
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.1.
+A trading performance analysis platform that visualizes MetaTrader 5 trading history. Built with Angular 21, Tailwind CSS, and server-side prerendering (SSG).
 
-## Development server
+## Prerequisites
 
-To start a local development server, run:
+- Node.js 20+
+- An MT5 trade history report exported as `.xlsx`
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Setup
 
 ```bash
-ng generate component component-name
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Generating trade data
+
+The app reads from a static JSON file (`src/assets/trade-data.json`) generated from an MT5 xlsx report.
+
+### Exporting from MetaTrader 5
+
+1. Open MT5 and go to the **History** tab
+2. Right-click and select the desired date range
+3. Right-click again and choose **Report** > **Open XML (xlsx)**
+4. Save the file as `report.xlsx` in the project root
+
+### Running the parser
+
+The parser runs automatically before `npm start` and `npm run build` via the `prestart`/`prebuild` scripts. You can also run it manually:
 
 ```bash
-ng generate --help
+node scripts/parse-report.mjs                    # uses report.xlsx in project root
+node scripts/parse-report.mjs path/to/report.xlsx # custom file path
 ```
 
-## Building
+This generates `src/assets/trade-data.json` with daily trade summaries grouped by date and monthly totals.
 
-To build the project run:
+## Development
 
 ```bash
-ng build
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Open `http://localhost:4200/`.
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Build
 
 ```bash
-ng test
+npm run build
 ```
 
-## Running end-to-end tests
+Produces a prerendered static site in `dist/trading-calendar/`.
 
-For end-to-end (e2e) testing, run:
+## Tests
 
 ```bash
-ng e2e
+npm test
 ```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
