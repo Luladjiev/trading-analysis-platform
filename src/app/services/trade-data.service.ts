@@ -1,25 +1,29 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable, InjectionToken } from '@angular/core';
 import type { TradeData, DailySummary, MonthlyTotal, AccountInfo } from '../models/trade';
 import data from '../../assets/trade-data.json';
 
-const tradeData = data as TradeData;
+export const TRADE_DATA = new InjectionToken<TradeData>('TRADE_DATA', {
+  providedIn: 'root',
+  factory: () => data as TradeData,
+});
 
 @Injectable({ providedIn: 'root' })
 export class TradeDataService {
-  readonly account: AccountInfo = tradeData.account;
+  private readonly data = inject(TRADE_DATA);
+  readonly account: AccountInfo = this.data.account;
 
   getDailySummary(dateKey: string): DailySummary | undefined {
-    return tradeData.dailySummaries[dateKey];
+    return this.data.dailySummaries[dateKey];
   }
 
   getMonthlyTotal(monthKey: string): MonthlyTotal | undefined {
-    return tradeData.monthlyTotals[monthKey];
+    return this.data.monthlyTotals[monthKey];
   }
 
   getDailySummariesForMonth(year: number, month: number): Record<string, DailySummary> {
     const prefix = `${year}-${String(month).padStart(2, '0')}`;
     const result: Record<string, DailySummary> = {};
-    for (const [key, summary] of Object.entries(tradeData.dailySummaries)) {
+    for (const [key, summary] of Object.entries(this.data.dailySummaries)) {
       if (key.startsWith(prefix)) {
         result[key] = summary;
       }
@@ -28,6 +32,6 @@ export class TradeDataService {
   }
 
   getAvailableMonths(): string[] {
-    return Object.keys(tradeData.monthlyTotals).sort();
+    return Object.keys(this.data.monthlyTotals).sort();
   }
 }
