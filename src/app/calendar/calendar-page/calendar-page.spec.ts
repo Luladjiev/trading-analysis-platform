@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 import { CalendarPage } from './calendar-page';
-import { TradeDataService } from '../services/trade-data.service';
+import { TradeDataService } from '../../services/trade-data/trade-data.service';
 
 const mockService = {
   account: { name: 'Test', number: '123', currency: 'USD', company: 'TestCo' },

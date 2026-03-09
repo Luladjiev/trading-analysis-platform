@@ -1,6 +1,6 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { CalendarDayCell } from './calendar-day-cell';
-import type { DailySummary } from '../models/trade';
+import type { DailySummary } from '../../models/trade';
 
 describe('CalendarDayCell', () => {
   let fixture: ComponentFixture<CalendarDayCell>;

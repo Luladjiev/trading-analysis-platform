@@ -1,6 +1,6 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { TradeListDialog } from './trade-list-dialog';
-import type { DailySummary } from '../models/trade';
+import type { DailySummary } from '../../models/trade';
 
 describe('TradeListDialog', () => {
   let fixture: ComponentFixture<TradeListDialog>;

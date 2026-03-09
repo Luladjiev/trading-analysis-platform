@@ -1,6 +1,6 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { CalendarGrid, type CalendarDaySlot } from './calendar-grid';
-import type { DailySummary } from '../models/trade';
+import type { DailySummary } from '../../models/trade';
 
 describe('CalendarGrid', () => {
   let fixture: ComponentFixture<CalendarGrid>;

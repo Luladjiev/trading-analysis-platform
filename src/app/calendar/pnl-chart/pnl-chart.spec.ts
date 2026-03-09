@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Component, viewChild } from '@angular/core';
 import { PnlChart } from './pnl-chart';
-import type { DailySummary } from '../models/trade';
+import type { DailySummary } from '../../models/trade';
 import { vi } from 'vitest';
 
 if (typeof globalThis.ResizeObserver === 'undefined') {

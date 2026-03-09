@@ -1,6 +1,6 @@
 import { inject, Injectable, InjectionToken } from '@angular/core';
-import type { TradeData, DailySummary, MonthlyTotal, AccountInfo } from '../models/trade';
-import data from '../../assets/trade-data.json';
+import type { TradeData, DailySummary, MonthlyTotal, AccountInfo } from '../../models/trade';
+import data from '../../../assets/trade-data.json';
 
 export const TRADE_DATA = new InjectionToken<TradeData>('TRADE_DATA', {
   providedIn: 'root',

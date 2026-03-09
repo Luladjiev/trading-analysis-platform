@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { TradeDataService, TRADE_DATA } from './trade-data.service';
-import type { TradeData } from '../models/trade';
+import type { TradeData } from '../../models/trade';
 
 const mockData: TradeData = {
   account: { name: 'Test', number: '123', currency: 'USD', company: 'TestCo' },

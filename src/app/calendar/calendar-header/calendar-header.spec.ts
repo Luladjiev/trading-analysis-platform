@@ -1,6 +1,6 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { CalendarHeader } from './calendar-header';
-import type { MonthlyTotal } from '../models/trade';
+import type { MonthlyTotal } from '../../models/trade';
 
 describe('CalendarHeader', () => {
   let fixture: ComponentFixture<CalendarHeader>;

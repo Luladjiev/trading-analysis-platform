@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, computed, output } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
-import type { DailySummary } from '../models/trade';
+import type { DailySummary } from '../../models/trade';
 
 @Component({
   selector: 'app-calendar-day-cell',
@@ -16,26 +16,7 @@ import type { DailySummary } from '../models/trade';
     '(keydown.enter)': 'onCellClick()',
     '(keydown.space)': 'onCellClick($event)',
   },
-  template: `
-    @if (day()) {
-      <div class="flex justify-between items-start">
-        <span [class]="dayNumberClass()">{{ dayDisplay() }}</span>
-        @if (summary()) {
-          <span class="text-[10px] text-slate-500 uppercase font-bold tracking-tighter">
-            {{ summary()!.tradeCount }} {{ summary()!.tradeCount === 1 ? 'TRADE' : 'TRADES' }}
-          </span>
-        }
-      </div>
-      @if (summary()) {
-        <div class="mt-auto flex flex-col">
-          <span class="text-lg" [class]="plClass()">
-            {{ plPrefix() }}{{ summary()!.netPL | currency: currency() : 'symbol-narrow' : '1.2-2' }}
-          </span>
-          <div class="w-full h-0.5 mt-1" [class]="barClass()"></div>
-        </div>
-      }
-    }
-  `,
+  templateUrl: './calendar-day-cell.html',
 })
 export class CalendarDayCell {
   readonly day = input<number | null>(null);
