@@ -17,5 +17,6 @@
 
 body {
   font-family: 'Space Grotesk', sans-serif;
+  font-weight: 300;
   background-color: var(--color-background-dark);
 }

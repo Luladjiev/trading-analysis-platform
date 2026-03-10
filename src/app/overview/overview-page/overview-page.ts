@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { TradeDataService } from '../../services/trade-data/trade-data.service';
-import { CalendarHeader } from '../calendar-header/calendar-header';
-import { type CalendarDaySlot, CalendarGrid } from '../calendar-grid/calendar-grid';
-import { TradeListDialog } from '../trade-list-dialog/trade-list-dialog';
-import type { DailySummary } from '../../models/trade';
+import { TradingStatsService } from '../../services/trading-stats/trading-stats.service';
+import { StatCard } from '../../shared/stat-card/stat-card';
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -12,18 +11,18 @@ const MONTH_NAMES = [
 ];
 
 @Component({
-  selector: 'app-calendar-page',
+  selector: 'app-overview-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CalendarHeader, CalendarGrid, TradeListDialog],
-  templateUrl: './calendar-page.html',
+  imports: [StatCard, CurrencyPipe, DecimalPipe],
+  templateUrl: './overview-page.html',
 })
-export class CalendarPage {
+export class OverviewPage {
   private readonly tradeData = inject(TradeDataService);
+  private readonly statsService = inject(TradingStatsService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   readonly currency = this.tradeData.account.currency;
 
-  readonly selectedDaySummary = signal<DailySummary | null>(null);
   readonly currentYear = signal(0);
   readonly currentMonth = signal(0);
 
@@ -56,53 +55,38 @@ export class CalendarPage {
     this.tradeData.getDailySummariesForMonth(this.currentYear(), this.currentMonth()),
   );
 
-  protected readonly calendarWeeks = computed(() => {
-    const year = this.currentYear();
-    const month = this.currentMonth();
-    const firstDay = new Date(year, month - 1, 1);
-    const daysInMonth = new Date(year, month, 0).getDate();
+  protected readonly tradingStats = computed(() =>
+    this.statsService.computeStats(this.monthSummaries(), this.currentYear(), this.currentMonth()),
+  );
 
-    // Monday=0 ... Sunday=6
-    let startDow = (firstDay.getDay() + 6) % 7;
+  protected readonly avgTrade = computed(() => {
+    const stats = this.tradingStats();
+    if (stats.totalTrades === 0) return 0;
+    return (stats.grossProfit + stats.grossLoss) / stats.totalTrades;
+  });
 
-    const today = new Date();
-    const todayKey =
-      today.getFullYear() === year && today.getMonth() + 1 === month ? today.getDate() : -1;
+  protected readonly longPct = computed(() => {
+    const stats = this.tradingStats();
+    if (stats.totalTrades === 0) return 0;
+    return (stats.longCount / stats.totalTrades) * 100;
+  });
 
-    const weeks: CalendarDaySlot[][] = [];
-    let currentWeek: CalendarDaySlot[] = [];
+  protected readonly shortPct = computed(() => {
+    const stats = this.tradingStats();
+    if (stats.totalTrades === 0) return 0;
+    return (stats.shortCount / stats.totalTrades) * 100;
+  });
 
-    // Leading empty slots
-    for (let i = 0; i < startDow; i++) {
-      currentWeek.push({ day: null, dateKey: null, isToday: false, isWeekend: i >= 5 });
-    }
+  protected readonly winProfitPct = computed(() => {
+    const stats = this.tradingStats();
+    const total = stats.grossProfit + Math.abs(stats.grossLoss);
+    return total > 0 ? (stats.grossProfit / total) * 100 : 0;
+  });
 
-    for (let d = 1; d <= daysInMonth; d++) {
-      const dow = (startDow + d - 1) % 7;
-      const dateKey = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-      currentWeek.push({
-        day: d,
-        dateKey,
-        isToday: d === todayKey,
-        isWeekend: dow >= 5,
-      });
-
-      if (currentWeek.length === 7) {
-        weeks.push(currentWeek);
-        currentWeek = [];
-      }
-    }
-
-    // Trailing empty slots
-    if (currentWeek.length > 0) {
-      while (currentWeek.length < 7) {
-        const dow = currentWeek.length;
-        currentWeek.push({ day: null, dateKey: null, isToday: false, isWeekend: dow >= 5 });
-      }
-      weeks.push(currentWeek);
-    }
-
-    return weeks;
+  protected readonly lossProfitPct = computed(() => {
+    const stats = this.tradingStats();
+    const total = stats.grossProfit + Math.abs(stats.grossLoss);
+    return total > 0 ? (Math.abs(stats.grossLoss) / total) * 100 : 0;
   });
 
   navigateMonth(delta: number) {

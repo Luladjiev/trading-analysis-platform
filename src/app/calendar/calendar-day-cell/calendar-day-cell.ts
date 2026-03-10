@@ -42,15 +42,15 @@ export class CalendarDayCell {
 
   protected readonly dayNumberClass = computed(() => {
     if (this.isToday()) return 'text-xs font-bold text-primary';
-    if (this.summary()) return 'text-xs font-medium text-slate-100';
-    return 'text-xs font-medium text-slate-500';
+    if (this.summary()) return 'text-xs text-slate-100';
+    return 'text-xs text-slate-500';
   });
 
   protected readonly plClass = computed(() => {
     const s = this.summary();
     if (!s) return '';
     const color = s.netPL >= 0 ? 'text-success' : 'text-danger';
-    return this.isToday() ? `${color} font-bold` : `${color} font-medium`;
+    return color;
   });
 
   protected readonly barClass = computed(() => {

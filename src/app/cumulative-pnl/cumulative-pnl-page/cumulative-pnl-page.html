@@ -23,10 +23,12 @@
       </button>
     </div>
   </div>
-  <app-calendar-grid
-    [weeks]="calendarWeeks()"
+  <app-pnl-chart
     [dailySummaries]="monthSummaries()"
+    [previousMonthSummaries]="previousMonthSummaries()"
+    [previousMonthLabel]="previousMonthLabel()"
     [currency]="currency"
+    [monthLabel]="monthLabel() + ' ' + currentYear()"
     (daySelected)="selectedDaySummary.set($event)"
   />
   @if (selectedDaySummary()) {

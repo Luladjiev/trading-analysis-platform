@@ -27,6 +27,21 @@ export interface MonthlyTotal {
   tradeCount: number;
 }
 
+export interface TradingStats {
+  grossProfit: number;
+  grossLoss: number;
+  winRate: number;
+  winCount: number;
+  lossCount: number;
+  highestWin: { amount: number; date: string } | null;
+  highestLoss: { amount: number; date: string } | null;
+  tradesPerWeek: number;
+  totalTrades: number;
+  longCount: number;
+  shortCount: number;
+  profitFactor: number;
+}
+
 export interface TradeData {
   account: AccountInfo;
   dailySummaries: Record<string, DailySummary>;

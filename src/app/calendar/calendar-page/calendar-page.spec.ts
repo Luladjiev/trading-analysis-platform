@@ -73,34 +73,6 @@ describe('CalendarPage', () => {
     expect(component['monthLabel']()).toBe('December');
   });
 
-  it('previousMonthLabel returns previous month name and year', () => {
-    component.currentYear.set(2024);
-    component.currentMonth.set(3);
-    expect(component['previousMonthLabel']()).toBe('February 2024');
-  });
-
-  it('previousMonthLabel wraps January to December of previous year', () => {
-    component.currentYear.set(2024);
-    component.currentMonth.set(1);
-    expect(component['previousMonthLabel']()).toBe('December 2023');
-  });
-
-  it('previousMonthSummaries calls service with previous month', () => {
-    const spy = vi.spyOn(mockService, 'getDailySummariesForMonth');
-    component.currentYear.set(2024);
-    component.currentMonth.set(3);
-    component['previousMonthSummaries']();
-    expect(spy).toHaveBeenCalledWith(2024, 2);
-  });
-
-  it('previousMonthSummaries wraps Jan to Dec of previous year', () => {
-    const spy = vi.spyOn(mockService, 'getDailySummariesForMonth');
-    component.currentYear.set(2024);
-    component.currentMonth.set(1);
-    component['previousMonthSummaries']();
-    expect(spy).toHaveBeenCalledWith(2023, 12);
-  });
-
   it('calendarWeeks generates correct grid structure for Feb 2024', () => {
     component.currentYear.set(2024);
     component.currentMonth.set(2); // Feb 2024 starts on Thursday (dow 3)

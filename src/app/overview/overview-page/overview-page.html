@@ -1,0 +1,120 @@
+<main class="flex flex-col flex-1 px-6 py-6 lg:px-12 max-w-[1400px] mx-auto w-full">
+  <div class="flex flex-col md:flex-row justify-between items-start gap-6 mb-6">
+    <div class="flex flex-col gap-2">
+      <h1 class="text-white text-5xl leading-none tracking-tighter" aria-live="polite">
+        {{ monthLabel() }} {{ currentYear() }}
+      </h1>
+      @if (monthlyTotal()) {
+        <div class="flex items-center gap-2">
+          <span
+            class="text-xl tracking-tight"
+            [class]="monthlyTotal()!.netPL >= 0 ? 'text-success' : 'text-danger'"
+          >
+            {{ monthlyTotal()!.netPL >= 0 ? '+' : '' }}{{ monthlyTotal()!.netPL | currency: currency : 'symbol-narrow' : '1.2-2' }}
+          </span>
+          <span class="text-slate-500 text-sm uppercase tracking-widest">
+            ({{ monthlyTotal()!.tradeCount }} {{ monthlyTotal()!.tradeCount === 1 ? 'trade' : 'trades' }})
+          </span>
+        </div>
+      }
+    </div>
+    <div class="flex gap-2 items-end w-full md:w-auto">
+      <button
+        (click)="navigateMonth(-1)"
+        aria-label="Previous month"
+        class="flex items-center gap-2 px-5 py-2.5 bg-cool-grey/40 hover:bg-cool-grey/60 text-white text-xs font-bold uppercase tracking-widest transition-all border border-white/5 cursor-pointer"
+      >
+        &larr; Prev
+      </button>
+      <button
+        (click)="navigateMonth(1)"
+        aria-label="Next month"
+        class="flex items-center gap-2 px-5 py-2.5 bg-cool-grey/40 hover:bg-cool-grey/60 text-white text-xs font-bold uppercase tracking-widest transition-all border border-white/5 cursor-pointer"
+      >
+        Next &rarr;
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+    <app-stat-card
+      icon="trending_up"
+      iconColor="success"
+      title="Gross Profit"
+      [value]="(tradingStats().grossProfit | currency: currency : 'symbol-narrow' : '1.2-2') ?? ''"
+      valueColor="success"
+      [subtitle]="tradingStats().winCount + ' winning trades'"
+      [progress]="winProfitPct()"
+      progressColor="success"
+    />
+    <app-stat-card
+      icon="trending_down"
+      iconColor="danger"
+      title="Gross Loss"
+      [value]="(tradingStats().grossLoss | currency: currency : 'symbol-narrow' : '1.2-2') ?? ''"
+      valueColor="danger"
+      [subtitle]="tradingStats().lossCount + ' losing trades'"
+      [progress]="lossProfitPct()"
+      progressColor="danger"
+    />
+    <app-stat-card
+      icon="pie_chart"
+      iconColor="primary"
+      title="Win Rate"
+      [value]="(tradingStats().winRate | number: '1.1-1') + '%'"
+      valueColor="primary"
+      [subtitle]="tradingStats().winCount + 'W / ' + tradingStats().lossCount + 'L'"
+      [progress]="tradingStats().winRate"
+      progressColor="primary"
+    />
+    <app-stat-card
+      icon="military_tech"
+      iconColor="success"
+      title="Highest Win"
+      [value]="tradingStats().highestWin ? ((tradingStats().highestWin!.amount | currency: currency : 'symbol-narrow' : '1.2-2') ?? '') : 'N/A'"
+      valueColor="success"
+      [subtitle]="tradingStats().highestWin?.date ?? ''"
+    />
+    <app-stat-card
+      icon="warning"
+      iconColor="danger"
+      title="Highest Loss"
+      [value]="tradingStats().highestLoss ? ((tradingStats().highestLoss!.amount | currency: currency : 'symbol-narrow' : '1.2-2') ?? '') : 'N/A'"
+      valueColor="danger"
+      [subtitle]="tradingStats().highestLoss?.date ?? ''"
+    />
+    <app-stat-card
+      icon="calendar_view_week"
+      iconColor="primary"
+      title="Trades per Week"
+      [value]="(tradingStats().tradesPerWeek | number: '1.1-1') ?? ''"
+      [subtitle]="tradingStats().totalTrades + ' total trades'"
+    />
+    <app-stat-card
+      icon="balance"
+      iconColor="slate"
+      title="Long vs Short"
+      [value]="tradingStats().longCount + ' / ' + tradingStats().shortCount"
+      [subtitle]="'Long ' + (longPct() | number: '1.0-0') + '% / Short ' + (shortPct() | number: '1.0-0') + '%'"
+      [progress]="longPct()"
+      progressColor="primary"
+      [secondaryProgress]="shortPct()"
+      secondaryProgressColor="danger"
+    />
+    <app-stat-card
+      icon="equalizer"
+      iconColor="primary"
+      title="Profit Factor"
+      [value]="tradingStats().profitFactor === (1/0) ? '∞' : ((tradingStats().profitFactor | number: '1.2-2') ?? '')"
+      [subtitle]="'Ratio of gross profit to gross loss'"
+    />
+    <app-stat-card
+      icon="functions"
+      iconColor="slate"
+      title="Average Trade"
+      [value]="(avgTrade() | currency: currency : 'symbol-narrow' : '1.2-2') ?? ''"
+      [valueColor]="avgTrade() >= 0 ? 'success' : 'danger'"
+      [subtitle]="tradingStats().totalTrades + ' total trades'"
+    />
+  </div>
+</main>

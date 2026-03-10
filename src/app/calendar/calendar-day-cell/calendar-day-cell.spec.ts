@@ -28,18 +28,18 @@ describe('CalendarDayCell', () => {
     component = fixture.componentInstance;
   });
 
-  it('plClass returns text-success font-medium for positive netPL', () => {
+  it('plClass returns text-success for positive netPL', () => {
     fixture.componentRef.setInput('day', 15);
     fixture.componentRef.setInput('summary', positiveSummary);
     fixture.detectChanges();
-    expect(component['plClass']()).toBe('text-success font-medium');
+    expect(component['plClass']()).toBe('text-success');
   });
 
-  it('plClass returns text-danger font-medium for negative netPL', () => {
+  it('plClass returns text-danger for negative netPL', () => {
     fixture.componentRef.setInput('day', 16);
     fixture.componentRef.setInput('summary', negativeSummary);
     fixture.detectChanges();
-    expect(component['plClass']()).toBe('text-danger font-medium');
+    expect(component['plClass']()).toBe('text-danger');
   });
 
   it('plClass returns empty string when no summary', () => {
@@ -48,12 +48,12 @@ describe('CalendarDayCell', () => {
     expect(component['plClass']()).toBe('');
   });
 
-  it('plClass returns font-bold for today', () => {
+  it('plClass returns text-success for today', () => {
     fixture.componentRef.setInput('day', 15);
     fixture.componentRef.setInput('summary', positiveSummary);
     fixture.componentRef.setInput('isToday', true);
     fixture.detectChanges();
-    expect(component['plClass']()).toBe('text-success font-bold');
+    expect(component['plClass']()).toBe('text-success');
   });
 
   it('plPrefix returns + for positive netPL', () => {
