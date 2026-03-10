@@ -15,7 +15,7 @@ const ws = wb.Sheets[wb.SheetNames[0]];
 const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
 
 function detectFormat(rows) {
-  if (rows[2]?.[0] === 'Futures Trade History') return 'binance';
+  if (rows[2]?.[0] === 'Futures Position History') return 'binance';
   if (rows.some((r) => r[0] === 'Positions')) return 'metatrader';
   throw new Error('Unknown report format: could not detect Binance or MetaTrader');
 }
@@ -73,18 +73,23 @@ function parseBinance(rows) {
 
   for (let i = 10; i < rows.length; i++) {
     const row = rows[i];
-    if (!row || !row[1]) break;
+    if (!row || !row[0]) break;
 
-    const timeStr = String(row[1]);
-    const date = '20' + timeStr.slice(0, 8);
-    const symbol = String(row[2]);
-    const type = String(row[3]).toLowerCase();
-    const volume = parseFloat(String(row[5])) || 0;
-    const commission = -(parseFloat(String(row[7])) || 0);
+    const status = String(row[14] ?? '');
+    if (status === 'Partially Closed') continue;
+
+    const closedTimeStr = String(row[12] ?? '');
+    if (!closedTimeStr) continue;
+
+    const date = '20' + closedTimeStr.slice(0, 8);
+    const symbol = String(row[0]);
+    const type = String(row[2]).toLowerCase();
+    const volume = parseFloat(String(row[8])) || 0;
+    const commission = 0;
     const swap = 0;
-    const profit = parseFloat(String(row[8])) || 0;
+    const profit = parseFloat(String(row[9])) || 0;
 
-    if (commission === 0 && profit === 0) continue;
+    if (profit === 0) continue;
 
     trades.push({ date, symbol, type, volume, commission, swap, profit });
   }
