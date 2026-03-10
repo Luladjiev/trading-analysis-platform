@@ -47,3 +47,5 @@ src/assets/trade-data.json
 Thumbs.db
 
 .claude/settings.local.json
+
+report.xlsx
