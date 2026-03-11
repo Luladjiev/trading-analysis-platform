@@ -14,7 +14,15 @@ describe('CalendarGrid', () => {
 
   const twoWeeks: CalendarDaySlot[][] = [
     [makeSlot(1), makeSlot(2), makeSlot(3), makeSlot(4), makeSlot(5), makeSlot(6), makeSlot(7)],
-    [makeSlot(8), makeSlot(9), makeSlot(10), makeSlot(11), makeSlot(12), makeSlot(13), makeSlot(14)],
+    [
+      makeSlot(8),
+      makeSlot(9),
+      makeSlot(10),
+      makeSlot(11),
+      makeSlot(12),
+      makeSlot(13),
+      makeSlot(14),
+    ],
   ];
 
   beforeEach(() => {
@@ -30,7 +38,7 @@ describe('CalendarGrid', () => {
     const headers = fixture.nativeElement.querySelectorAll('[role="columnheader"]');
     expect(headers.length).toBe(7);
 
-    const labels = Array.from(headers).map((el: any) => el.textContent.trim());
+    const labels = Array.from(headers).map((el) => (el as HTMLElement).textContent!.trim());
     expect(labels).toEqual(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
   });
 
@@ -48,7 +56,17 @@ describe('CalendarGrid', () => {
       date: '2024-01-01',
       tradeCount: 1,
       netPL: 50,
-      trades: [{ symbol: 'EURUSD', type: 'buy', volume: 0.1, commission: -1, swap: 0, profit: 51, netPL: 50 }],
+      trades: [
+        {
+          symbol: 'EURUSD',
+          type: 'buy',
+          volume: 0.1,
+          commission: -1,
+          swap: 0,
+          profit: 51,
+          netPL: 50,
+        },
+      ],
     };
     fixture.componentRef.setInput('weeks', twoWeeks);
     fixture.componentRef.setInput('dailySummaries', { '2024-01-01': summary });

@@ -7,7 +7,7 @@ import type { DailySummary } from '../../models/trade';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CurrencyPipe],
   host: {
-    'role': 'gridcell',
+    role: 'gridcell',
     '[attr.aria-label]': 'ariaLabel()',
     '[class]': 'hostClasses()',
     '[attr.tabindex]': 'isClickable() ? 0 : -1',

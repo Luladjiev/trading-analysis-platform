@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CalendarPage } from './calendar-page';
 import { TradeDataService } from '../../services/trade-data/trade-data.service';
 
@@ -17,13 +18,25 @@ const mockService = {
   getDailySummariesForMonth: () => ({}),
 };
 
+const mockActivatedRoute = {
+  snapshot: { queryParams: {} },
+};
+
+const mockRouter = {
+  navigate: vi.fn(),
+};
+
 describe('CalendarPage', () => {
   let component: CalendarPage;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [CalendarPage],
-      providers: [{ provide: TradeDataService, useValue: mockService }],
+      providers: [
+        { provide: TradeDataService, useValue: mockService },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        { provide: Router, useValue: mockRouter },
+      ],
     });
     const fixture = TestBed.createComponent(CalendarPage);
     component = fixture.componentInstance;
@@ -82,12 +95,12 @@ describe('CalendarPage', () => {
     expect(weeks[0][0].day).toBeNull(); // Mon
     expect(weeks[0][1].day).toBeNull(); // Tue
     expect(weeks[0][2].day).toBeNull(); // Wed
-    expect(weeks[0][3].day).toBe(1);    // Thu
+    expect(weeks[0][3].day).toBe(1); // Thu
 
     // Total day slots across all weeks
     const allSlots = weeks.flat();
     expect(allSlots.length % 7).toBe(0); // always full weeks
-    const daySlots = allSlots.filter(s => s.day !== null);
+    const daySlots = allSlots.filter((s) => s.day !== null);
     expect(daySlots.length).toBe(29);
 
     // Last day

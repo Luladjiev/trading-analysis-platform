@@ -4,13 +4,16 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
   selector: 'app-stat-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex flex-col gap-3 p-5 bg-cool-grey/40 border border-white/5 hover:border-white/10 transition-colors h-full">
+    <div
+      class="flex flex-col gap-3 p-5 bg-cool-grey/40 border border-white/5 hover:border-white/10 transition-colors h-full"
+    >
       <div class="flex items-center gap-3">
         <span
           class="material-symbols-outlined text-2xl"
           [style.color]="iconColorValue()"
           aria-hidden="true"
-        >{{ icon() }}</span>
+          >{{ icon() }}</span
+        >
         <span class="text-sm text-slate-400 uppercase tracking-widest">{{ title() }}</span>
       </div>
       <div class="text-2xl tracking-tight" [style.color]="valueColorValue()">
@@ -73,7 +76,9 @@ export class StatCard {
     slate: '#94a3b8',
   };
 
-  protected readonly iconColorValue = computed(() => StatCard.COLOR_MAP[this.iconColor()] ?? this.iconColor());
+  protected readonly iconColorValue = computed(
+    () => StatCard.COLOR_MAP[this.iconColor()] ?? this.iconColor(),
+  );
   protected readonly valueColorValue = computed(() => {
     const c = this.valueColor();
     return c ? (StatCard.COLOR_MAP[c] ?? c) : '#f1f5f9';
@@ -84,7 +89,13 @@ export class StatCard {
     primary: 'bg-primary/20',
     slate: 'bg-slate-400/20',
   };
-  protected readonly progressBgClass = computed(() => StatCard.BG_CLASS_MAP[this.progressColor()] ?? 'bg-white/10');
-  protected readonly progressColorValue = computed(() => StatCard.COLOR_MAP[this.progressColor()] ?? this.progressColor());
-  protected readonly secondaryProgressColorValue = computed(() => StatCard.COLOR_MAP[this.secondaryProgressColor()] ?? this.secondaryProgressColor());
+  protected readonly progressBgClass = computed(
+    () => StatCard.BG_CLASS_MAP[this.progressColor()] ?? 'bg-white/10',
+  );
+  protected readonly progressColorValue = computed(
+    () => StatCard.COLOR_MAP[this.progressColor()] ?? this.progressColor(),
+  );
+  protected readonly secondaryProgressColorValue = computed(
+    () => StatCard.COLOR_MAP[this.secondaryProgressColor()] ?? this.secondaryProgressColor(),
+  );
 }

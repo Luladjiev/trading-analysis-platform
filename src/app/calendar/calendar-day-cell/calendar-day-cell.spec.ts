@@ -11,7 +11,15 @@ describe('CalendarDayCell', () => {
     tradeCount: 3,
     netPL: 150.5,
     trades: [
-      { symbol: 'EURUSD', type: 'buy', volume: 0.1, commission: -1, swap: 0, profit: 151.5, netPL: 150.5 },
+      {
+        symbol: 'EURUSD',
+        type: 'buy',
+        volume: 0.1,
+        commission: -1,
+        swap: 0,
+        profit: 151.5,
+        netPL: 150.5,
+      },
     ],
   };
 
@@ -133,7 +141,9 @@ describe('CalendarDayCell', () => {
     fixture.componentRef.setInput('day', 15);
     fixture.componentRef.setInput('summary', positiveSummary);
     fixture.detectChanges();
-    expect(component['ariaLabel']()).toBe('Day 15: profit 150.5 EUR, 3 trades. Click to view trades');
+    expect(component['ariaLabel']()).toBe(
+      'Day 15: profit 150.5 EUR, 3 trades. Click to view trades',
+    );
   });
 
   it('ariaLabel includes loss direction for negative netPL', () => {

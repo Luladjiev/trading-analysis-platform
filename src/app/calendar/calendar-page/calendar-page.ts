@@ -7,8 +7,18 @@ import { TradeListDialog } from '../trade-list-dialog/trade-list-dialog';
 import type { DailySummary } from '../../models/trade';
 
 const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 @Component({
@@ -63,7 +73,7 @@ export class CalendarPage {
     const daysInMonth = new Date(year, month, 0).getDate();
 
     // Monday=0 ... Sunday=6
-    let startDow = (firstDay.getDay() + 6) % 7;
+    const startDow = (firstDay.getDay() + 6) % 7;
 
     const today = new Date();
     const todayKey =

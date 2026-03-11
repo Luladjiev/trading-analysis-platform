@@ -4,12 +4,10 @@ import type { MonthlyTotal } from '../../models/trade';
 
 describe('CalendarHeader', () => {
   let fixture: ComponentFixture<CalendarHeader>;
-  let component: CalendarHeader;
 
   beforeEach(() => {
     TestBed.configureTestingModule({ imports: [CalendarHeader] });
     fixture = TestBed.createComponent(CalendarHeader);
-    component = fixture.componentInstance;
   });
 
   it('displays month label and year', () => {

@@ -31,9 +31,7 @@ export class TradeListDialog {
     this.summary().netPL >= 0 ? 'text-success' : 'text-danger',
   );
 
-  protected readonly totalPlPrefix = computed(() =>
-    this.summary().netPL >= 0 ? '+' : '',
-  );
+  protected readonly totalPlPrefix = computed(() => (this.summary().netPL >= 0 ? '+' : ''));
 
   constructor() {
     afterNextRender(() => {

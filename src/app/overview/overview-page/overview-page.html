@@ -10,10 +10,12 @@
             class="text-xl tracking-tight"
             [class]="monthlyTotal()!.netPL >= 0 ? 'text-success' : 'text-danger'"
           >
-            {{ monthlyTotal()!.netPL >= 0 ? '+' : '' }}{{ monthlyTotal()!.netPL | currency: currency : 'symbol-narrow' : '1.2-2' }}
+            {{ monthlyTotal()!.netPL >= 0 ? '+' : ''
+            }}{{ monthlyTotal()!.netPL | currency: currency : 'symbol-narrow' : '1.2-2' }}
           </span>
           <span class="text-slate-500 text-sm uppercase tracking-widest">
-            ({{ monthlyTotal()!.tradeCount }} {{ monthlyTotal()!.tradeCount === 1 ? 'trade' : 'trades' }})
+            ({{ monthlyTotal()!.tradeCount }}
+            {{ monthlyTotal()!.tradeCount === 1 ? 'trade' : 'trades' }})
           </span>
         </div>
       }
@@ -71,7 +73,12 @@
       icon="military_tech"
       iconColor="success"
       title="Highest Win"
-      [value]="tradingStats().highestWin ? ((tradingStats().highestWin!.amount | currency: currency : 'symbol-narrow' : '1.2-2') ?? '') : 'N/A'"
+      [value]="
+        tradingStats().highestWin
+          ? ((tradingStats().highestWin!.amount | currency: currency : 'symbol-narrow' : '1.2-2') ??
+            '')
+          : 'N/A'
+      "
       valueColor="success"
       [subtitle]="tradingStats().highestWin?.date ?? ''"
     />
@@ -79,7 +86,12 @@
       icon="warning"
       iconColor="danger"
       title="Highest Loss"
-      [value]="tradingStats().highestLoss ? ((tradingStats().highestLoss!.amount | currency: currency : 'symbol-narrow' : '1.2-2') ?? '') : 'N/A'"
+      [value]="
+        tradingStats().highestLoss
+          ? ((tradingStats().highestLoss!.amount
+              | currency: currency : 'symbol-narrow' : '1.2-2') ?? '')
+          : 'N/A'
+      "
       valueColor="danger"
       [subtitle]="tradingStats().highestLoss?.date ?? ''"
     />
@@ -95,7 +107,13 @@
       iconColor="slate"
       title="Long vs Short"
       [value]="tradingStats().longCount + ' / ' + tradingStats().shortCount"
-      [subtitle]="'Long ' + (longPct() | number: '1.0-0') + '% / Short ' + (shortPct() | number: '1.0-0') + '%'"
+      [subtitle]="
+        'Long ' +
+        (longPct() | number: '1.0-0') +
+        '% / Short ' +
+        (shortPct() | number: '1.0-0') +
+        '%'
+      "
       [progress]="longPct()"
       progressColor="primary"
       [secondaryProgress]="shortPct()"
@@ -105,7 +123,11 @@
       icon="equalizer"
       iconColor="primary"
       title="Profit Factor"
-      [value]="tradingStats().profitFactor === (1/0) ? '∞' : ((tradingStats().profitFactor | number: '1.2-2') ?? '')"
+      [value]="
+        tradingStats().profitFactor === 1 / 0
+          ? '∞'
+          : ((tradingStats().profitFactor | number: '1.2-2') ?? '')
+      "
       [subtitle]="'Ratio of gross profit to gross loss'"
     />
     <app-stat-card

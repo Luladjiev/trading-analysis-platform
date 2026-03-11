@@ -8,10 +8,12 @@
         class="text-xl tracking-tight"
         [class]="monthlyTotal()!.netPL >= 0 ? 'text-success' : 'text-danger'"
       >
-        {{ monthlyTotal()!.netPL >= 0 ? '+' : '' }}{{ monthlyTotal()!.netPL | currency: currency() : 'symbol-narrow' : '1.2-2' }}
+        {{ monthlyTotal()!.netPL >= 0 ? '+' : ''
+        }}{{ monthlyTotal()!.netPL | currency: currency() : 'symbol-narrow' : '1.2-2' }}
       </span>
       <span class="text-slate-500 text-sm uppercase tracking-widest">
-        ({{ monthlyTotal()!.tradeCount }} {{ monthlyTotal()!.tradeCount === 1 ? 'trade' : 'trades' }})
+        ({{ monthlyTotal()!.tradeCount }}
+        {{ monthlyTotal()!.tradeCount === 1 ? 'trade' : 'trades' }})
       </span>
     </div>
   }

@@ -11,7 +11,16 @@ import {
   DestroyRef,
   inject,
 } from '@angular/core';
-import { createChart, BaselineSeries, LineSeries, LineStyle, type IChartApi, type ISeriesApi, type BaselineStyleOptions, type DeepPartial } from 'lightweight-charts';
+import {
+  createChart,
+  BaselineSeries,
+  LineSeries,
+  LineStyle,
+  type IChartApi,
+  type ISeriesApi,
+  type BaselineStyleOptions,
+  type DeepPartial,
+} from 'lightweight-charts';
 import type { DailySummary } from '../../models/trade';
 
 @Component({
@@ -40,9 +49,9 @@ export class PnlChart {
     let cumulative = 0;
     return Object.keys(summaries)
       .sort()
-      .map(key => ({
+      .map((key) => ({
         time: key as `${number}-${number}-${number}`,
-        value: cumulative += summaries[key].netPL,
+        value: (cumulative += summaries[key].netPL),
       }));
   });
 
@@ -55,11 +64,11 @@ export class PnlChart {
     let cumulative = 0;
     return Object.keys(summaries)
       .sort()
-      .map(key => {
+      .map((key) => {
         const day = key.substring(8); // extract DD
         return {
           time: `${currentYearMonth}-${day}` as `${number}-${number}-${number}`,
-          value: cumulative += summaries[key].netPL,
+          value: (cumulative += summaries[key].netPL),
         };
       });
   });
@@ -149,7 +158,7 @@ export class PnlChart {
       if (summary) this.daySelected.emit(summary);
     });
 
-    this.resizeObserver = new ResizeObserver(entries => {
+    this.resizeObserver = new ResizeObserver((entries) => {
       const entry = entries[0];
       if (entry && this.chart) {
         this.chart.applyOptions({ width: entry.contentRect.width });

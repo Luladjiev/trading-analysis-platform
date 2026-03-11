@@ -1,7 +1,14 @@
-<div class="w-full min-w-[1024px] border border-cool-grey overflow-hidden shadow-lg shadow-black/20" role="grid" aria-label="Trading calendar">
+<div
+  class="w-full min-w-[1024px] border border-cool-grey overflow-hidden shadow-lg shadow-black/20"
+  role="grid"
+  aria-label="Trading calendar"
+>
   <div class="grid grid-cols-7 bg-cool-grey/30 border-b border-cool-grey" role="row">
     @for (header of weekdays; track header) {
-      <div role="columnheader" class="py-4 text-center text-[10px] font-bold text-slate-500 tracking-[0.2em] uppercase">
+      <div
+        role="columnheader"
+        class="py-4 text-center text-[10px] font-bold text-slate-500 tracking-[0.2em] uppercase"
+      >
         {{ header }}
       </div>
     }

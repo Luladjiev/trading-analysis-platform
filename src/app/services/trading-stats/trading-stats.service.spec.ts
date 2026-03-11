@@ -8,12 +8,15 @@ describe('TradingStatsService', () => {
     service = new TradingStatsService();
   });
 
-  function makeSummary(date: string, trades: { type: 'buy' | 'sell'; netPL: number }[]): DailySummary {
+  function makeSummary(
+    date: string,
+    trades: { type: 'buy' | 'sell'; netPL: number }[],
+  ): DailySummary {
     return {
       date,
       tradeCount: trades.length,
       netPL: trades.reduce((s, t) => s + t.netPL, 0),
-      trades: trades.map(t => ({
+      trades: trades.map((t) => ({
         symbol: 'EURUSD',
         type: t.type,
         volume: 1,
@@ -96,9 +99,7 @@ describe('TradingStatsService', () => {
 
   it('should compute trades per week based on days in month', () => {
     const summaries: Record<string, DailySummary> = {
-      '2025-01-06': makeSummary('2025-01-06', [
-        { type: 'buy', netPL: 10 },
-      ]),
+      '2025-01-06': makeSummary('2025-01-06', [{ type: 'buy', netPL: 10 }]),
     };
 
     const stats = service.computeStats(summaries, 2025, 1);

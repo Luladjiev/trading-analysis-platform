@@ -1,3 +1,4 @@
+<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
 <dialog
   #dialog
   class="m-auto w-full max-w-2xl border border-cool-grey bg-cool-grey p-0 text-gray-200 shadow-xl backdrop:bg-black/40"
@@ -37,11 +38,18 @@
             <td class="py-2 pr-3">{{ trade.symbol }}</td>
             <td class="py-2 pr-3 capitalize">{{ trade.type }}</td>
             <td class="py-2 pr-3 text-right">{{ trade.volume }}</td>
-            <td class="py-2 pr-3 text-right">{{ trade.commission | currency: currency() : 'symbol-narrow' : '1.2-2' }}</td>
-            <td class="py-2 pr-3 text-right">{{ trade.swap | currency: currency() : 'symbol-narrow' : '1.2-2' }}</td>
-            <td class="py-2 pr-3 text-right">{{ trade.profit | currency: currency() : 'symbol-narrow' : '1.2-2' }}</td>
+            <td class="py-2 pr-3 text-right">
+              {{ trade.commission | currency: currency() : 'symbol-narrow' : '1.2-2' }}
+            </td>
+            <td class="py-2 pr-3 text-right">
+              {{ trade.swap | currency: currency() : 'symbol-narrow' : '1.2-2' }}
+            </td>
+            <td class="py-2 pr-3 text-right">
+              {{ trade.profit | currency: currency() : 'symbol-narrow' : '1.2-2' }}
+            </td>
             <td class="py-2 text-right" [class]="trade.netPL >= 0 ? 'text-success' : 'text-danger'">
-              {{ trade.netPL >= 0 ? '+' : '' }}{{ trade.netPL | currency: currency() : 'symbol-narrow' : '1.2-2' }}
+              {{ trade.netPL >= 0 ? '+' : ''
+              }}{{ trade.netPL | currency: currency() : 'symbol-narrow' : '1.2-2' }}
             </td>
           </tr>
         }
@@ -52,7 +60,8 @@
             Total ({{ summary().tradeCount }} {{ summary().tradeCount === 1 ? 'trade' : 'trades' }})
           </td>
           <td class="pt-3 text-right" [class]="totalPlClass()">
-            {{ totalPlPrefix() }}{{ summary().netPL | currency: currency() : 'symbol-narrow' : '1.2-2' }}
+            {{ totalPlPrefix()
+            }}{{ summary().netPL | currency: currency() : 'symbol-narrow' : '1.2-2' }}
           </td>
         </tr>
       </tfoot>

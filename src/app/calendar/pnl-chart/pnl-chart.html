@@ -1,16 +1,25 @@
-<div class="w-full min-w-[1024px] border border-cool-grey overflow-hidden shadow-lg shadow-black/20 bg-cool-grey/10 p-8" role="figure">
+<div
+  class="w-full min-w-[1024px] border border-cool-grey overflow-hidden shadow-lg shadow-black/20 bg-cool-grey/10 p-8"
+  role="figure"
+>
   <div class="flex justify-between items-center mb-8">
     <div class="flex gap-6">
       <div class="flex items-center gap-2">
         <div class="w-8 h-0.5 bg-primary"></div>
-        <span class="text-xs font-bold text-slate-100 uppercase tracking-widest">{{ monthLabel() }}</span>
+        <span class="text-xs font-bold text-slate-100 uppercase tracking-widest">{{
+          monthLabel()
+        }}</span>
       </div>
       <div class="flex items-center gap-2">
-        <div class="w-8 h-0 border-t-2 border-dashed" style="border-color: #2A3038"></div>
-        <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">{{ previousMonthLabel() }}</span>
+        <div class="w-8 h-0 border-t-2 border-dashed" style="border-color: #2a3038"></div>
+        <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">{{
+          previousMonthLabel()
+        }}</span>
       </div>
     </div>
-    <div class="text-[10px] font-bold text-slate-500 tracking-[0.2em] uppercase">Cumulative Profit &amp; Loss ({{ currency() }})</div>
+    <div class="text-[10px] font-bold text-slate-500 tracking-[0.2em] uppercase">
+      Cumulative Profit &amp; Loss ({{ currency() }})
+    </div>
   </div>
   <div
     #chartContainer

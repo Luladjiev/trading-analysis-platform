@@ -11,8 +11,24 @@ describe('TradeListDialog', () => {
     tradeCount: 2,
     netPL: 120.5,
     trades: [
-      { symbol: 'EURUSD', type: 'buy', volume: 0.1, commission: -1.2, swap: 0, profit: 80, netPL: 78.8 },
-      { symbol: 'GBPUSD', type: 'sell', volume: 0.2, commission: -2.0, swap: -0.3, profit: 44, netPL: 41.7 },
+      {
+        symbol: 'EURUSD',
+        type: 'buy',
+        volume: 0.1,
+        commission: -1.2,
+        swap: 0,
+        profit: 80,
+        netPL: 78.8,
+      },
+      {
+        symbol: 'GBPUSD',
+        type: 'sell',
+        volume: 0.2,
+        commission: -2.0,
+        swap: -0.3,
+        profit: 44,
+        netPL: 41.7,
+      },
     ],
   };
 
@@ -21,7 +37,15 @@ describe('TradeListDialog', () => {
     tradeCount: 1,
     netPL: -50,
     trades: [
-      { symbol: 'USDJPY', type: 'buy', volume: 0.5, commission: -3.0, swap: 0, profit: -47, netPL: -50 },
+      {
+        symbol: 'USDJPY',
+        type: 'buy',
+        volume: 0.5,
+        commission: -3.0,
+        swap: 0,
+        profit: -47,
+        netPL: -50,
+      },
     ],
   };
 

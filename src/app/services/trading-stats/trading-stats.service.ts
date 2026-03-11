@@ -31,8 +31,8 @@ export class TradingStatsService {
       };
     }
 
-    const wins = trades.filter(t => t.netPL > 0);
-    const losses = trades.filter(t => t.netPL < 0);
+    const wins = trades.filter((t) => t.netPL > 0);
+    const losses = trades.filter((t) => t.netPL < 0);
 
     const grossProfit = wins.reduce((sum, t) => sum + t.netPL, 0);
     const grossLoss = losses.reduce((sum, t) => sum + t.netPL, 0);
@@ -57,11 +57,12 @@ export class TradingStatsService {
     const weeksInMonth = daysInMonth / 7;
     const tradesPerWeek = weeksInMonth > 0 ? totalTrades / weeksInMonth : 0;
 
-    const longCount = trades.filter(t => t.type === 'buy').length;
-    const shortCount = trades.filter(t => t.type === 'sell').length;
+    const longCount = trades.filter((t) => t.type === 'buy').length;
+    const shortCount = trades.filter((t) => t.type === 'sell').length;
 
     const absGrossLoss = Math.abs(grossLoss);
-    const profitFactor = absGrossLoss > 0 ? grossProfit / absGrossLoss : grossProfit > 0 ? Infinity : 0;
+    const profitFactor =
+      absGrossLoss > 0 ? grossProfit / absGrossLoss : grossProfit > 0 ? Infinity : 0;
 
     return {
       grossProfit,

@@ -7,8 +7,18 @@ import { TradeListDialog } from '../../calendar/trade-list-dialog/trade-list-dia
 import type { DailySummary } from '../../models/trade';
 
 const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 @Component({
@@ -59,14 +69,20 @@ export class CumulativePnlPage {
   protected readonly previousMonthSummaries = computed(() => {
     let y = this.currentYear();
     let m = this.currentMonth() - 1;
-    if (m < 1) { m = 12; y--; }
+    if (m < 1) {
+      m = 12;
+      y--;
+    }
     return this.tradeData.getDailySummariesForMonth(y, m);
   });
 
   protected readonly previousMonthLabel = computed(() => {
     let y = this.currentYear();
     let m = this.currentMonth() - 1;
-    if (m < 1) { m = 12; y--; }
+    if (m < 1) {
+      m = 12;
+      y--;
+    }
     return `${MONTH_NAMES[m - 1]} ${y}`;
   });
 
