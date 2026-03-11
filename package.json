@@ -11,7 +11,8 @@
     "test": "ng test",
     "serve:ssr:trading-analysis-platform": "node dist/trading-analysis-platform/server/server.mjs",
     "prepare": "husky",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "test:scripts": "vitest run --config scripts/vitest.config.mjs"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
