@@ -83,7 +83,7 @@ function parseBinance(rows) {
 
     const date = '20' + closedTimeStr.slice(0, 8);
     const symbol = String(row[0]);
-    const type = String(row[2]).toLowerCase();
+    const type = String(row[2]).toLowerCase() === 'short' ? 'sell' : 'buy';
     const volume = parseFloat(String(row[8])) || 0;
     const commission = 0;
     const swap = 0;
