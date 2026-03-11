@@ -65,7 +65,7 @@ function parseBinance(rows) {
   const account = {
     name: String(rows[4]?.[1] ?? ''),
     number: String(rows[5]?.[1] ?? ''),
-    currency: 'USDC',
+    currency: '$',
     company: 'Binance',
   };
 
