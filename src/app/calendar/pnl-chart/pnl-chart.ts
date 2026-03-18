@@ -59,15 +59,30 @@ export class PnlChart {
     const summaries = this.previousMonthSummaries();
     const currentKeys = Object.keys(this.dailySummaries()).sort();
     if (currentKeys.length === 0) return [];
-    // Extract current year-month to remap previous month dates
+
+    // Detect if data spans multiple months (yearly view) or a single month
+    const firstMonth = currentKeys[0].substring(0, 7);
+    const lastMonth = currentKeys[currentKeys.length - 1].substring(0, 7);
+    const isYearly = firstMonth !== lastMonth;
+
+    const currentYear = currentKeys[0].substring(0, 4);
     const currentYearMonth = currentKeys[0].substring(0, 7);
+
     let cumulative = 0;
     return Object.keys(summaries)
       .sort()
       .map((key) => {
-        const day = key.substring(8); // extract DD
+        let remappedTime: string;
+        if (isYearly) {
+          // Replace the year portion: 2024-03-15 → 2025-03-15
+          remappedTime = `${currentYear}${key.substring(4)}`;
+        } else {
+          // Replace year-month: 2025-01-15 → 2025-02-15
+          const day = key.substring(8);
+          remappedTime = `${currentYearMonth}-${day}`;
+        }
         return {
-          time: `${currentYearMonth}-${day}` as `${number}-${number}-${number}`,
+          time: remappedTime as `${number}-${number}-${number}`,
           value: (cumulative += summaries[key].netPL),
         };
       });

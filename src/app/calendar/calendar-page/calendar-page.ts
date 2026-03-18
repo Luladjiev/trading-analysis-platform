@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
 import { TradeDataService } from '../../services/trade-data/trade-data.service';
 import { NavigationStateService } from '../../services/navigation-state/navigation-state.service';
 import { CalendarHeader } from '../calendar-header/calendar-header';
@@ -33,21 +32,12 @@ const MONTH_NAMES = [
 export class CalendarPage {
   private readonly tradeData = inject(TradeDataService);
   private readonly nav = inject(NavigationStateService);
-  private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   readonly currency = this.tradeData.account.currency;
 
   readonly selectedDaySummary = signal<DailySummary | null>(null);
   readonly currentYear = this.nav.currentYear;
   readonly currentMonth = this.nav.currentMonth;
-  readonly viewMode = signal<'monthly' | 'yearly'>('monthly');
-
-  constructor() {
-    const qView = this.route.snapshot.queryParams['view'];
-    if (qView === 'yearly') {
-      this.viewMode.set('yearly');
-    }
-  }
+  readonly viewMode = this.nav.viewMode;
 
   protected readonly monthLabel = computed(() => MONTH_NAMES[this.currentMonth() - 1] ?? '');
 
@@ -125,31 +115,19 @@ export class CalendarPage {
   });
 
   setViewMode(mode: 'monthly' | 'yearly') {
-    this.viewMode.set(mode);
-    this.updateQueryParams();
+    this.nav.viewMode.set(mode);
   }
 
   navigateMonth(delta: number) {
     this.nav.navigateMonth(delta);
-    this.updateQueryParams();
   }
 
   navigateYear(delta: number) {
     this.nav.navigateYear(delta);
-    this.updateQueryParams();
   }
 
   navigateToMonth(event: { year: number; month: number }) {
     this.nav.setMonth(event.year, event.month);
-    this.viewMode.set('monthly');
-    this.updateQueryParams();
-  }
-
-  private updateQueryParams() {
-    const params: Record<string, string | number> = {};
-    if (this.viewMode() === 'yearly') {
-      params['view'] = 'yearly';
-    }
-    this.router.navigate([], { queryParams: params, replaceUrl: true });
+    this.nav.viewMode.set('monthly');
   }
 }

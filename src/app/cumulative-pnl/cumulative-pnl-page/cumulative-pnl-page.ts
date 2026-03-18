@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 import { TradeDataService } from '../../services/trade-data/trade-data.service';
 import { NavigationStateService } from '../../services/navigation-state/navigation-state.service';
 import { CalendarHeader } from '../../calendar/calendar-header/calendar-header';
@@ -24,7 +25,7 @@ const MONTH_NAMES = [
 @Component({
   selector: 'app-cumulative-pnl-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CalendarHeader, PnlChart, TradeListDialog],
+  imports: [CurrencyPipe, CalendarHeader, PnlChart, TradeListDialog],
   templateUrl: './cumulative-pnl-page.html',
 })
 export class CumulativePnlPage {
@@ -35,6 +36,7 @@ export class CumulativePnlPage {
   readonly selectedDaySummary = signal<DailySummary | null>(null);
   readonly currentYear = this.nav.currentYear;
   readonly currentMonth = this.nav.currentMonth;
+  readonly viewMode = this.nav.viewMode;
 
   protected readonly monthLabel = computed(() => MONTH_NAMES[this.currentMonth() - 1] ?? '');
 
@@ -68,7 +70,39 @@ export class CumulativePnlPage {
     return `${MONTH_NAMES[m - 1]} ${y}`;
   });
 
+  protected readonly yearlyDailySummaries = computed(() =>
+    this.tradeData.getDailySummariesForYear(this.currentYear()),
+  );
+
+  protected readonly yearlyTotals = computed(() =>
+    this.tradeData.getMonthlyTotalsForYear(this.currentYear()),
+  );
+
+  protected readonly yearlyNetPL = computed(() => {
+    const totals = this.yearlyTotals();
+    return Object.values(totals).reduce((sum, t) => sum + t.netPL, 0);
+  });
+
+  protected readonly yearlyTradeCount = computed(() => {
+    const totals = this.yearlyTotals();
+    return Object.values(totals).reduce((sum, t) => sum + t.tradeCount, 0);
+  });
+
+  protected readonly previousYearDailySummaries = computed(() =>
+    this.tradeData.getDailySummariesForYear(this.currentYear() - 1),
+  );
+
+  protected readonly previousYearLabel = computed(() => `${this.currentYear() - 1}`);
+
+  setViewMode(mode: 'monthly' | 'yearly') {
+    this.nav.viewMode.set(mode);
+  }
+
   navigateMonth(delta: number) {
     this.nav.navigateMonth(delta);
+  }
+
+  navigateYear(delta: number) {
+    this.nav.navigateYear(delta);
   }
 }

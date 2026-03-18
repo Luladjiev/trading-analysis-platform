@@ -31,6 +31,17 @@ export class TradeDataService {
     return result;
   }
 
+  getDailySummariesForYear(year: number): Record<string, DailySummary> {
+    const prefix = `${year}`;
+    const result: Record<string, DailySummary> = {};
+    for (const [key, summary] of Object.entries(this.data.dailySummaries)) {
+      if (key.startsWith(prefix)) {
+        result[key] = summary;
+      }
+    }
+    return result;
+  }
+
   getMonthlyTotalsForYear(year: number): Record<string, MonthlyTotal> {
     const prefix = `${year}`;
     const result: Record<string, MonthlyTotal> = {};

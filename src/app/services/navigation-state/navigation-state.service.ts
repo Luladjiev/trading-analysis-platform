@@ -7,6 +7,7 @@ export class NavigationStateService {
 
   readonly currentYear = signal(0);
   readonly currentMonth = signal(0);
+  readonly viewMode = signal<'monthly' | 'yearly'>('monthly');
 
   constructor() {
     const months = this.tradeData.getAvailableMonths();

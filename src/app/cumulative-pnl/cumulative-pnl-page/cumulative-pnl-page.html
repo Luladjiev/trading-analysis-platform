@@ -1,36 +1,168 @@
 <main class="flex flex-col flex-1 px-6 py-6 lg:px-12 max-w-[1400px] mx-auto w-full">
   <div class="flex flex-col md:flex-row justify-between items-start gap-6 mb-6">
-    <app-calendar-header
-      [monthLabel]="monthLabel()"
-      [year]="currentYear()"
-      [monthlyTotal]="monthlyTotal()"
-      [currency]="currency"
-    />
-    <div class="flex gap-2">
-      <button
-        (click)="navigateMonth(-1)"
-        aria-label="Previous month"
-        class="flex items-center gap-2 px-5 py-2.5 bg-cool-grey/40 hover:bg-cool-grey/60 text-white text-xs font-bold uppercase tracking-widest transition-all border border-white/5 cursor-pointer"
-      >
-        &larr; Prev
-      </button>
-      <button
-        (click)="navigateMonth(1)"
-        aria-label="Next month"
-        class="flex items-center gap-2 px-5 py-2.5 bg-cool-grey/40 hover:bg-cool-grey/60 text-white text-xs font-bold uppercase tracking-widest transition-all border border-white/5 cursor-pointer"
-      >
-        Next &rarr;
-      </button>
+    @if (viewMode() === 'monthly') {
+      <app-calendar-header
+        [monthLabel]="monthLabel()"
+        [year]="currentYear()"
+        [monthlyTotal]="monthlyTotal()"
+        [currency]="currency"
+      />
+    } @else {
+      <div class="flex flex-col gap-2">
+        <h1 class="text-white text-5xl leading-none tracking-tighter" aria-live="polite">
+          Year {{ currentYear() }}
+        </h1>
+        <div class="flex items-center gap-2">
+          <span
+            class="text-xl tracking-tight"
+            [class]="yearlyNetPL() >= 0 ? 'text-success' : 'text-danger'"
+          >
+            {{ yearlyNetPL() >= 0 ? '+' : ''
+            }}{{ yearlyNetPL() | currency: currency : 'symbol-narrow' : '1.2-2' }}
+          </span>
+          <span class="text-slate-500 text-sm uppercase tracking-widest">
+            ({{ yearlyTradeCount() }} {{ yearlyTradeCount() === 1 ? 'trade' : 'trades' }})
+          </span>
+        </div>
+      </div>
+    }
+    <div class="flex items-center gap-6">
+      <div class="flex bg-cool-grey/40 p-1 rounded-lg">
+        <button
+          (click)="setViewMode('monthly')"
+          [attr.aria-pressed]="viewMode() === 'monthly'"
+          class="px-4 py-2 text-xs uppercase tracking-widest transition-all cursor-pointer"
+          [class]="
+            viewMode() === 'monthly'
+              ? 'bg-primary text-white rounded'
+              : 'text-slate-400 hover:text-white'
+          "
+        >
+          Monthly
+        </button>
+        <button
+          (click)="setViewMode('yearly')"
+          [attr.aria-pressed]="viewMode() === 'yearly'"
+          class="px-4 py-2 text-xs uppercase tracking-widest transition-all cursor-pointer"
+          [class]="
+            viewMode() === 'yearly'
+              ? 'bg-primary text-white rounded'
+              : 'text-slate-400 hover:text-white'
+          "
+        >
+          Yearly
+        </button>
+      </div>
+      <div class="flex gap-2">
+        @if (viewMode() === 'monthly') {
+          <button
+            (click)="navigateMonth(-1)"
+            aria-label="Previous month"
+            class="flex items-center gap-2 px-5 py-2.5 bg-cool-grey/40 hover:bg-cool-grey/60 text-white text-xs uppercase tracking-widest transition-all border border-white/5 cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            Prev
+          </button>
+          <button
+            (click)="navigateMonth(1)"
+            aria-label="Next month"
+            class="flex items-center gap-2 px-5 py-2.5 bg-cool-grey/40 hover:bg-cool-grey/60 text-white text-xs uppercase tracking-widest transition-all border border-white/5 cursor-pointer"
+          >
+            Next
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        } @else {
+          <button
+            (click)="navigateYear(-1)"
+            aria-label="Previous year"
+            class="flex items-center gap-2 px-5 py-2.5 bg-cool-grey/40 hover:bg-cool-grey/60 text-white text-xs uppercase tracking-widest transition-all border border-white/5 cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            Prev
+          </button>
+          <button
+            (click)="navigateYear(1)"
+            aria-label="Next year"
+            class="flex items-center gap-2 px-5 py-2.5 bg-cool-grey/40 hover:bg-cool-grey/60 text-white text-xs uppercase tracking-widest transition-all border border-white/5 cursor-pointer"
+          >
+            Next
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        }
+      </div>
     </div>
   </div>
-  <app-pnl-chart
-    [dailySummaries]="monthSummaries()"
-    [previousMonthSummaries]="previousMonthSummaries()"
-    [previousMonthLabel]="previousMonthLabel()"
-    [currency]="currency"
-    [monthLabel]="monthLabel() + ' ' + currentYear()"
-    (daySelected)="selectedDaySummary.set($event)"
-  />
+  @if (viewMode() === 'monthly') {
+    <app-pnl-chart
+      [dailySummaries]="monthSummaries()"
+      [previousMonthSummaries]="previousMonthSummaries()"
+      [previousMonthLabel]="previousMonthLabel()"
+      [currency]="currency"
+      [monthLabel]="monthLabel() + ' ' + currentYear()"
+      (daySelected)="selectedDaySummary.set($event)"
+    />
+  } @else {
+    <app-pnl-chart
+      [dailySummaries]="yearlyDailySummaries()"
+      [previousMonthSummaries]="previousYearDailySummaries()"
+      [previousMonthLabel]="previousYearLabel()"
+      [currency]="currency"
+      [monthLabel]="'Year ' + currentYear()"
+      (daySelected)="selectedDaySummary.set($event)"
+    />
+  }
   @if (selectedDaySummary()) {
     <app-trade-list-dialog
       [summary]="selectedDaySummary()!"
