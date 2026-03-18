@@ -31,6 +31,15 @@ export class TradeDataService {
     return result;
   }
 
+  getMonthlyTotalsForYear(year: number): Record<string, MonthlyTotal> {
+    const prefix = `${year}`;
+    const result: Record<string, MonthlyTotal> = {};
+    for (const [key, total] of Object.entries(this.data.monthlyTotals)) {
+      if (key.startsWith(prefix)) result[key] = total;
+    }
+    return result;
+  }
+
   getAvailableMonths(): string[] {
     return Object.keys(this.data.monthlyTotals).sort();
   }

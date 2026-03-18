@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TradeDataService } from '../../services/trade-data/trade-data.service';
 import { CalendarHeader } from '../calendar-header/calendar-header';
 import { type CalendarDaySlot, CalendarGrid } from '../calendar-grid/calendar-grid';
+import { CalendarYearlyGrid } from '../calendar-yearly-grid/calendar-yearly-grid';
 import { TradeListDialog } from '../trade-list-dialog/trade-list-dialog';
 import type { DailySummary } from '../../models/trade';
 
@@ -24,7 +26,7 @@ const MONTH_NAMES = [
 @Component({
   selector: 'app-calendar-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CalendarHeader, CalendarGrid, TradeListDialog],
+  imports: [CurrencyPipe, CalendarHeader, CalendarGrid, CalendarYearlyGrid, TradeListDialog],
   templateUrl: './calendar-page.html',
 })
 export class CalendarPage {
@@ -36,12 +38,14 @@ export class CalendarPage {
   readonly selectedDaySummary = signal<DailySummary | null>(null);
   readonly currentYear = signal(0);
   readonly currentMonth = signal(0);
+  readonly viewMode = signal<'monthly' | 'yearly'>('monthly');
 
   constructor() {
     const months = this.tradeData.getAvailableMonths();
     const params = this.route.snapshot.queryParams;
     const qYear = Number(params['year']);
     const qMonth = Number(params['month']);
+    const qView = params['view'];
 
     if (qYear > 0 && qMonth >= 1 && qMonth <= 12) {
       this.currentYear.set(qYear);
@@ -51,6 +55,10 @@ export class CalendarPage {
       const [y, m] = last.split('-').map(Number);
       this.currentYear.set(y);
       this.currentMonth.set(m);
+    }
+
+    if (qView === 'yearly') {
+      this.viewMode.set('yearly');
     }
   }
 
@@ -65,6 +73,20 @@ export class CalendarPage {
   protected readonly monthSummaries = computed(() =>
     this.tradeData.getDailySummariesForMonth(this.currentYear(), this.currentMonth()),
   );
+
+  protected readonly yearlyTotals = computed(() =>
+    this.tradeData.getMonthlyTotalsForYear(this.currentYear()),
+  );
+
+  protected readonly yearlyNetPL = computed(() => {
+    const totals = this.yearlyTotals();
+    return Object.values(totals).reduce((sum, t) => sum + t.netPL, 0);
+  });
+
+  protected readonly yearlyTradeCount = computed(() => {
+    const totals = this.yearlyTotals();
+    return Object.values(totals).reduce((sum, t) => sum + t.tradeCount, 0);
+  });
 
   protected readonly calendarWeeks = computed(() => {
     const year = this.currentYear();
@@ -115,6 +137,11 @@ export class CalendarPage {
     return weeks;
   });
 
+  setViewMode(mode: 'monthly' | 'yearly') {
+    this.viewMode.set(mode);
+    this.updateQueryParams();
+  }
+
   navigateMonth(delta: number) {
     let m = this.currentMonth() + delta;
     let y = this.currentYear();
@@ -127,9 +154,29 @@ export class CalendarPage {
     }
     this.currentYear.set(y);
     this.currentMonth.set(m);
-    this.router.navigate([], {
-      queryParams: { year: y, month: m },
-      replaceUrl: true,
-    });
+    this.updateQueryParams();
+  }
+
+  navigateYear(delta: number) {
+    this.currentYear.update((y) => y + delta);
+    this.updateQueryParams();
+  }
+
+  navigateToMonth(event: { year: number; month: number }) {
+    this.currentYear.set(event.year);
+    this.currentMonth.set(event.month);
+    this.viewMode.set('monthly');
+    this.updateQueryParams();
+  }
+
+  private updateQueryParams() {
+    const params: Record<string, string | number> = {
+      year: this.currentYear(),
+      month: this.currentMonth(),
+    };
+    if (this.viewMode() === 'yearly') {
+      params['view'] = 'yearly';
+    }
+    this.router.navigate([], { queryParams: params, replaceUrl: true });
   }
 }
