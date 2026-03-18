@@ -3,7 +3,10 @@
   role="grid"
   aria-label="Trading calendar"
 >
-  <div class="grid grid-cols-7 bg-cool-grey/30 border-b border-cool-grey" role="row">
+  <div
+    class="grid grid-cols-[repeat(7,1fr)_100px] bg-cool-grey/30 border-b border-cool-grey"
+    role="row"
+  >
     @for (header of weekdays; track header) {
       <div
         role="columnheader"
@@ -12,8 +15,14 @@
         {{ header }}
       </div>
     }
+    <div
+      role="columnheader"
+      class="py-4 text-center text-[10px] font-bold text-primary tracking-[0.2em] uppercase bg-primary/5"
+    >
+      Weekly
+    </div>
   </div>
-  <div class="grid grid-cols-7 gap-px bg-cool-grey">
+  <div class="grid grid-cols-[repeat(7,1fr)_100px] gap-px bg-cool-grey">
     @for (week of weeks(); track $index) {
       <div role="row" class="contents">
         @for (slot of week; track $index) {
@@ -26,6 +35,11 @@
             (dayClick)="daySelected.emit($event)"
           />
         }
+        <app-calendar-weekly-cell
+          [netPL]="weeklyPnLs()[$index].netPL"
+          [tradeCount]="weeklyPnLs()[$index].tradeCount"
+          [currency]="currency()"
+        />
       </div>
     }
   </div>

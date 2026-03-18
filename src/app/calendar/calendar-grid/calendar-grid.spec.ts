@@ -30,16 +30,16 @@ describe('CalendarGrid', () => {
     fixture = TestBed.createComponent(CalendarGrid);
   });
 
-  it('renders 7 weekday column headers', () => {
+  it('renders 8 column headers with Weekly as the 8th', () => {
     fixture.componentRef.setInput('weeks', twoWeeks);
     fixture.componentRef.setInput('dailySummaries', {});
     fixture.detectChanges();
 
     const headers = fixture.nativeElement.querySelectorAll('[role="columnheader"]');
-    expect(headers.length).toBe(7);
+    expect(headers.length).toBe(8);
 
     const labels = Array.from(headers).map((el) => (el as HTMLElement).textContent!.trim());
-    expect(labels).toEqual(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+    expect(labels).toEqual(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Weekly']);
   });
 
   it('renders correct number of day cells based on weeks input', () => {
@@ -49,6 +49,42 @@ describe('CalendarGrid', () => {
 
     const cells = fixture.nativeElement.querySelectorAll('app-calendar-day-cell');
     expect(cells.length).toBe(14);
+  });
+
+  it('renders a weekly cell for each week row', () => {
+    fixture.componentRef.setInput('weeks', twoWeeks);
+    fixture.componentRef.setInput('dailySummaries', {});
+    fixture.detectChanges();
+
+    const weeklyCells = fixture.nativeElement.querySelectorAll('app-calendar-weekly-cell');
+    expect(weeklyCells.length).toBe(2);
+  });
+
+  it('computes weekly PnL by summing daily summaries', () => {
+    const makeSummary = (date: string, netPL: number, tradeCount: number): DailySummary => ({
+      date,
+      netPL,
+      tradeCount,
+      trades: [],
+    });
+
+    const summaries: Record<string, DailySummary> = {
+      '2024-01-01': makeSummary('2024-01-01', 100, 2),
+      '2024-01-03': makeSummary('2024-01-03', -30, 1),
+      '2024-01-08': makeSummary('2024-01-08', 50, 3),
+    };
+
+    fixture.componentRef.setInput('weeks', twoWeeks);
+    fixture.componentRef.setInput('dailySummaries', summaries);
+    fixture.detectChanges();
+
+    const weeklyCells = fixture.nativeElement.querySelectorAll('app-calendar-weekly-cell');
+
+    // Week 1: 100 + (-30) = 70
+    expect(weeklyCells[0].textContent).toContain('€70.00');
+
+    // Week 2: 50
+    expect(weeklyCells[1].textContent).toContain('€50.00');
   });
 
   it('daySelected relays dayClick from child cell', () => {
