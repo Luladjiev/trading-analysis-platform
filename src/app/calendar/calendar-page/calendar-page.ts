@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TradeDataService } from '../../services/trade-data/trade-data.service';
+import { NavigationStateService } from '../../services/navigation-state/navigation-state.service';
 import { CalendarHeader } from '../calendar-header/calendar-header';
 import { type CalendarDaySlot, CalendarGrid } from '../calendar-grid/calendar-grid';
 import { CalendarYearlyGrid } from '../calendar-yearly-grid/calendar-yearly-grid';
@@ -31,32 +32,18 @@ const MONTH_NAMES = [
 })
 export class CalendarPage {
   private readonly tradeData = inject(TradeDataService);
+  private readonly nav = inject(NavigationStateService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   readonly currency = this.tradeData.account.currency;
 
   readonly selectedDaySummary = signal<DailySummary | null>(null);
-  readonly currentYear = signal(0);
-  readonly currentMonth = signal(0);
+  readonly currentYear = this.nav.currentYear;
+  readonly currentMonth = this.nav.currentMonth;
   readonly viewMode = signal<'monthly' | 'yearly'>('monthly');
 
   constructor() {
-    const months = this.tradeData.getAvailableMonths();
-    const params = this.route.snapshot.queryParams;
-    const qYear = Number(params['year']);
-    const qMonth = Number(params['month']);
-    const qView = params['view'];
-
-    if (qYear > 0 && qMonth >= 1 && qMonth <= 12) {
-      this.currentYear.set(qYear);
-      this.currentMonth.set(qMonth);
-    } else if (months.length > 0) {
-      const last = months[months.length - 1];
-      const [y, m] = last.split('-').map(Number);
-      this.currentYear.set(y);
-      this.currentMonth.set(m);
-    }
-
+    const qView = this.route.snapshot.queryParams['view'];
     if (qView === 'yearly') {
       this.viewMode.set('yearly');
     }
@@ -143,37 +130,23 @@ export class CalendarPage {
   }
 
   navigateMonth(delta: number) {
-    let m = this.currentMonth() + delta;
-    let y = this.currentYear();
-    if (m < 1) {
-      m = 12;
-      y--;
-    } else if (m > 12) {
-      m = 1;
-      y++;
-    }
-    this.currentYear.set(y);
-    this.currentMonth.set(m);
+    this.nav.navigateMonth(delta);
     this.updateQueryParams();
   }
 
   navigateYear(delta: number) {
-    this.currentYear.update((y) => y + delta);
+    this.nav.navigateYear(delta);
     this.updateQueryParams();
   }
 
   navigateToMonth(event: { year: number; month: number }) {
-    this.currentYear.set(event.year);
-    this.currentMonth.set(event.month);
+    this.nav.setMonth(event.year, event.month);
     this.viewMode.set('monthly');
     this.updateQueryParams();
   }
 
   private updateQueryParams() {
-    const params: Record<string, string | number> = {
-      year: this.currentYear(),
-      month: this.currentMonth(),
-    };
+    const params: Record<string, string | number> = {};
     if (this.viewMode() === 'yearly') {
       params['view'] = 'yearly';
     }
